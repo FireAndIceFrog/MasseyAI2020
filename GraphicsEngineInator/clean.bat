@@ -1,2 +1,1 @@
 del *.o
-del *.exe

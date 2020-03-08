@@ -12,4 +12,3 @@ graphics2.o		:	 graphics2.cpp graphics2.h
 
 clean:
 	del *.o
-	del *.exe
