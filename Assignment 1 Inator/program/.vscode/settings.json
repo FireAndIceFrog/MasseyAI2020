@@ -1,6 +1,24 @@
 {
     "files.associations": {
         "string": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "iostream": "cpp",
+        "cstdio": "cpp",
+        "*.tcc": "cpp",
+        "bitset": "cpp",
+        "array": "cpp",
+        "unordered_map": "cpp",
+        "memory": "cpp",
+        "optional": "cpp",
+        "string_view": "cpp",
+        "fstream": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "vector": "cpp",
+        "shared_mutex": "cpp",
+        "sstream": "cpp",
+        "streambuf": "cpp",
+        "tuple": "cpp",
+        "new": "cpp"
     }
 }

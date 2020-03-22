@@ -4,7 +4,11 @@
 #include<cstdio>
 #include "SHA.h"
 #include <sstream>
-#define maxSize 0xfff
+#include <random>
+#include <ctime>
+#ifndef maxSize
+   #define maxSize 0xfff
+#endif
 // This is a dictionary class created by mathew lawrence 
 // This dictionary is stored as pointers on the heap and is designed to get big.
 // This class has three functions:
@@ -46,12 +50,14 @@ class dict {
       };
       hashNode *hashTable[maxSize] ;
       T defaultValue;
+      string lastKey;
 
    public:
       dict(T defaultV):defaultValue{defaultV}{
          for (int i = 0; i < maxSize; ++i){
             hashTable[i] = nullptr;
          }
+         lastKey = "";
       }
       ~dict(){
          //go through each item in the list and delete them from the heap.
@@ -65,8 +71,9 @@ class dict {
                //remove the item from the list and continue
                delete prev;
             }
-            
+
          }
+         lastKey = nullptr;
       }
 
       int hashFunc (string input){
@@ -115,23 +122,43 @@ class dict {
             return;
          }
       }
-      T get(string key){
+      T* get(string key){
+         lastKey = key;
          //get the hash representation of the key
          int location = hashFunc(key);
+         T returnable = defaultValue;
          //check to see if it exists, if it doesnt make this key|data pair the new head
          if (hashTable[location] == nullptr){
-            return defaultValue;
+            //if there is no value to change, then the returned node is still null!
+            return &defaultValue;
+            
          } 
          hashNode * curr = hashTable[location];
          while(curr != nullptr){
             //if the text is found, return the data.
             if(curr->text == key){
+               
                return &(curr->data);
             }
             // go to next item laterally.
             curr = curr->next;
          }
-         return defaultValue;
+         return &defaultValue;
+      }
+      //override the List["key"] operator
+      T&  operator[](string key){
+        return *this->get(key);
+         
+      }
+      dict& operator=(T data) 
+      {
+         if(data == defaultValue){
+            return *this;
+         } 
+         this->update(lastKey, data);
+         
+
+         return *this;  // Return a reference to myself.
       }
 
 
@@ -170,29 +197,9 @@ class dict {
       }
 
 };
+
 // How to use the list: 
 // 1. declare it. it can be on the stack or heap, but the data is always on the heap
 // 2. use update to add to the dictionary
 // 3. when you want to delete an entry, use the remove keyword
 // 4. to get the data from any entry, use the get keyword.
-int main() {
-   dict<bool> visitedList = dict<bool>(false) ;
-   visitedList.update("batch", true);
-   visitedList.update("btach", true);
-   visitedList.update("cbath", true);
-   visitedList.update("hctab", true);
-   visitedList.update("bathc", true);
-
-   if(visitedList.get("batch")==1){
-      cout<<"batch entered correctly";
-   } else {
-      cout << "Incorrect data";
-   }
-   cout<<"\n";
-   if(visitedList.get("cat")==1){
-      cout<<"cat entered correctly";
-   } else {
-      cout << "cat entered incorrectly";
-   }
-
-}
