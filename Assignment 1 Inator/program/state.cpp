@@ -43,9 +43,11 @@ class stateFactory{
             states.push(new stateData(origin));
         }
         ~stateFactory(){
-            while(states.size() > 0){
+            int i = states.size();
+            while(i > 0){
                 delete states.top();
                 states.pop();
+                --i;
             }
         }
 

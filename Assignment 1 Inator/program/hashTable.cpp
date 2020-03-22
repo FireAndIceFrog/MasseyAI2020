@@ -51,6 +51,7 @@ class dict {
       hashNode *hashTable[maxSize] ;
       T defaultValue;
       string lastKey;
+      int currSize;
 
    public:
       dict(T defaultV):defaultValue{defaultV}{
@@ -58,6 +59,7 @@ class dict {
             hashTable[i] = nullptr;
          }
          lastKey = "";
+         currSize = 0;
       }
       ~dict(){
          //go through each item in the list and delete them from the heap.
@@ -97,11 +99,15 @@ class dict {
            //look for the target or look for the end node
            return updateLaterally(text, data, curr->next);
         } else {
+            ++currSize;
            hashNode *target = new hashNode(text, data);
            curr->next = target;
            return;
         }
 
+      }
+      int size(){
+         return currSize;
       }
       void update(string key, T data){
          //get the hash representation of the key
@@ -111,6 +117,7 @@ class dict {
          if (hashTable[location] == nullptr){
             hashNode *node = new hashNode(key, data);
             hashTable[location] = node;
+            ++currSize;
             return;
          } else if (hashTable[location]->text == key){
             //if the current is the right one, update it.
@@ -170,6 +177,7 @@ class dict {
          if (hashTable[location] == nullptr){
             return false;
          } else if (hashTable[location]->text == key){
+            --currSize;
             hashNode *prev = hashTable[location]; 
             hashNode *curr  = hashTable[location]->next;
             prev->next = nullptr;
@@ -184,6 +192,7 @@ class dict {
       bool deleteLaterally(string key, hashNode *prev, hashNode *curr){
          //if the current has the correct index text, delete it!
          if (curr->text == key){
+            --currSize;
             prev->next = curr->next;
             curr->next = nullptr;
             delete curr;
