@@ -135,7 +135,7 @@ string progressiveDeepeningSearch_NonStrict_VisitedList(string const initialStat
 	
 //***********************************************************************************************************
 	actualRunningTime = ((float)(clock() - startTime)/CLOCKS_PER_SEC);
-	path = "DDRRLLLUUURDLUDURDLUU";  //this is just a dummy path for testing the function           
+	path = "LR";  //this is just a dummy path for testing the function           
 	return path;		
 		
 }

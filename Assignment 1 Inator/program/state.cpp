@@ -50,6 +50,12 @@ class stateFactory{
                 --i;
             }
         }
+        int getEnqueue(){
+            return EnqueueStates;
+        }
+        int getDequeue(){
+            return DeQueueStates;
+        }
 
         void replace(int index, stack<stateData*>* newStates){
             //function to insert a stack of states into the current stack at given index. if the index is out of bounds, the stack does nothing.
@@ -63,12 +69,14 @@ class stateFactory{
                 finalStack.push(states.top());
                 states.pop();
             }
-            cout<<"New State Size: "<<newStates->size()<<"\n";
-            for (int i = 0; i <= newStates->size(); ++i){
-                //add the enqueue on.
-                ++EnqueueStates;
-                finalStack.push(newStates->top());
-                newStates->pop();
+            
+            if(!newStates->empty()) {
+                for (int i = 0; i <= newStates->size(); ++i){
+                    //add the enqueue on.
+                    ++EnqueueStates;
+                    finalStack.push(newStates->top());
+                    newStates->pop();
+                }
             }
             ++DeQueueStates;
             delete newStates;

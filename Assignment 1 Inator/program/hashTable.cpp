@@ -30,6 +30,27 @@
 using namespace std;
 
 template <typename T>
+class hashNode{
+         public:
+            hashNode(string index, T stuff): text{index}, data{stuff}, next{nullptr} {};
+            ~hashNode(){
+               if(next != nullptr){
+                  delete next;
+               }
+            }
+            string text;
+            T data;
+            hashNode *next;
+            hashNode& operator=(T stuff) 
+            {
+               data = stuff;
+               
+               
+
+               return *this;  // Return a reference to myself.
+            }
+      };
+template <typename T>
 class dict {
    private:
       // we will store the dictionary values as key-value pairs. 
@@ -41,14 +62,8 @@ class dict {
       // -> hashnode ("Zebra", "Data")
       // The hash function we will use is SHA 256, given by the website http://www.zedwood.com/article/cpp-sha256-function
 
-      class hashNode{
-         public:
-            hashNode(string index, T stuff): text{index}, data{stuff}, next{nullptr} {};
-            string text;
-            T data;
-            hashNode *next;
-      };
-      hashNode *hashTable[maxSize] ;
+      
+      hashNode<T> *hashTable[maxSize] ;
       T defaultValue;
       string lastKey;
       int currSize;
@@ -63,19 +78,13 @@ class dict {
       }
       ~dict(){
          //go through each item in the list and delete them from the heap.
-         for (hashNode *item : hashTable){
-            hashNode *prev, *curr;
-            curr = item;
-            while(curr != nullptr){
-               prev = curr;
-               curr = curr->next;
-               prev->next = nullptr;
-               //remove the item from the list and continue
-               delete prev;
+         for (hashNode<T> *item : hashTable){
+            if(item!=nullptr) {
+               delete item;
             }
 
          }
-         lastKey = nullptr;
+         
       }
 
       int hashFunc (string input){
@@ -88,11 +97,11 @@ class dict {
          //format it so that it is the right size
          return output % maxSize;
       }
-      void updateLaterally(string text, T data, hashNode *curr){
+      hashNode<T>* updateLaterally(string text, T data, hashNode<T> *curr){
       // if the item is found, set it and delete the target
         if(curr->text == text){
            curr->data = data;
-           return ;
+           return curr;
         }
         //if not, then search
         if(curr->next != nullptr){
@@ -100,36 +109,35 @@ class dict {
            return updateLaterally(text, data, curr->next);
         } else {
             ++currSize;
-           hashNode *target = new hashNode(text, data);
+           hashNode<T> *target = new hashNode<T>(text, data);
            curr->next = target;
-           return;
+           return target;
         }
 
       }
       int size(){
          return currSize;
       }
-      void update(string key, T data){
+      hashNode<T>* update(string key, T data){
          //get the hash representation of the key
-         
          int location = hashFunc(key);
          //check to see if it exists, if it doesnt make this key|data pair the new head
          if (hashTable[location] == nullptr){
-            hashNode *node = new hashNode(key, data);
+            hashNode<T> *node = new hashNode<T>(key, data);
             hashTable[location] = node;
             ++currSize;
-            return;
+            return node;
          } else if (hashTable[location]->text == key){
             //if the current is the right one, update it.
             hashTable[location]->data = data;
-            return;
+            return  hashTable[location];
          } else {
             
-            updateLaterally(key, data, hashTable[location]);
-            return;
+            return updateLaterally(key, data, hashTable[location]);
+            
          }
       }
-      T* get(string key){
+      hashNode<T>* get(string key){
          lastKey = key;
          //get the hash representation of the key
          int location = hashFunc(key);
@@ -137,36 +145,32 @@ class dict {
          //check to see if it exists, if it doesnt make this key|data pair the new head
          if (hashTable[location] == nullptr){
             //if there is no value to change, then the returned node is still null!
-            return &defaultValue;
+            return nullptr;
             
          } 
-         hashNode * curr = hashTable[location];
+         hashNode<T> * curr = hashTable[location];
          while(curr != nullptr){
             //if the text is found, return the data.
             if(curr->text == key){
                
-               return &(curr->data);
+               return curr;
             }
             // go to next item laterally.
             curr = curr->next;
          }
-         return &defaultValue;
+         return nullptr;
       }
       //override the List["key"] operator
-      T&  operator[](string key){
-        return *this->get(key);
-         
-      }
-      dict& operator=(T data) 
-      {
-         if(data == defaultValue){
-            return *this;
-         } 
-         this->update(lastKey, data);
-         
+      hashNode<T>&  operator[](string key){
+         hashNode<T>* node = get(key);
+         if(node == nullptr) {
+            node = update(key, defaultValue);
+         }
 
-         return *this;  // Return a reference to myself.
+        return *node;
+         
       }
+      
 
 
 
@@ -176,11 +180,11 @@ class dict {
          //check to see if it exists, if it doesnt make this key|data pair the new head
          if (hashTable[location] == nullptr){
             return false;
-         } else if (hashTable[location]->text == key){
+         } else if (hashTable[location].text == key){
             --currSize;
-            hashNode *prev = hashTable[location]; 
-            hashNode *curr  = hashTable[location]->next;
-            prev->next = nullptr;
+            hashNode<T> *prev = hashTable[location]; 
+            hashNode<T> *curr  = hashTable[location].next;
+            prev.next = nullptr;
             delete prev;
             hashTable[location] = curr;
             return true;
@@ -189,7 +193,7 @@ class dict {
          
          
       }
-      bool deleteLaterally(string key, hashNode *prev, hashNode *curr){
+      bool deleteLaterally(string key, hashNode<T> *prev, hashNode<T> *curr){
          //if the current has the correct index text, delete it!
          if (curr->text == key){
             --currSize;

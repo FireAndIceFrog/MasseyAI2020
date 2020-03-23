@@ -1,13 +1,16 @@
 #include "state.h"
 #include "hashTable.h"
+#include <iostream>
 class PDState : public stateFactory{
     
     public:
     dict<bool>  visitedStates = dict<bool>(false);
+    dict<string> visitedPath = dict<string>("");
     int currentDepth;
     int maxDepth;
     string goalState;
     PDState(string initState, int maxDepth):stateFactory(initState){
+        visitedStates[initState] = true;
         currentDepth = 0;
         this->maxDepth = maxDepth;
     }
@@ -20,18 +23,25 @@ class PDState : public stateFactory{
         int i = 0; 
         stack<stateData*>* tempStates = new stack<stateData*>();
         currentDepth = states.top()->depth+1;
-        for (int i = 0; i <= newStates->size(); ++i){
+        for (int i = 0; i <= newStates->size()+1; ++i){
             string index = newStates->top()->state;
             if(index == goalState){
-                cout<<"FOUND GOAL!\n\n--------------\n\n"<<goalState<<"\n\n";
+                cout<<"Found the state!\n";
                 return true;
             }
-            if(visitedStates[index]){
+            if(visitedStates[index].data){
+                // cout<<"This state is in the visited list already!\n";
+                if(newStates->empty())break;
+                index = newStates->top()->state;
+                cout<<"Delete: "<<index<<" "<<newStates->top()->depth<<"\n";
                 delete (newStates->top());
             } else {
-               //visitedStates[index] = true;
-
+                index = newStates->top()->state;
+                // cout<<"Checking index!"<<index<<" == "<<goalState<< "\n";
+               visitedStates[index] = true;
                 newStates->top()->depth = currentDepth;
+                
+                cout<<"State: "<<index<<" "<<newStates->top()->direction<<"\n";
                 tempStates->push(newStates->top());
             }
             newStates->pop();
@@ -45,38 +55,46 @@ class PDState : public stateFactory{
     string top(){
         return states.top()->state;
     }
+
+    void getVisitedPath(stack<stateData*>* newStateData){
+        string top = this->states.top()->direction;
+        reverse(newStateData);
+        stateData* curr = newStateData->top();
+        stack<stateData*>* reversedData = new stack<stateData*>();
+        while(!newStateData->empty()){
+            visitedPath[newStateData->top()->state] = newStateData->top()->direction+top;
+            reversedData->push(newStateData->top());
+            newStateData->pop();
+        }
+        reverse(reversedData);
+        newStateData->swap(*reversedData);
+        delete reversedData;
+
+
+    }
+
+
     bool step(){
         int i = 0;
-        if (states.empty()) return false;
-        while(states.top()->depth > maxDepth){
-            cout<<"Current step is out of bounds! Deleting!\n------------------------\n";
-            delete states.top(); 
-            states.pop();
-            cout<<"<---- is states empty? "<<(states.empty() == true)<<"\n";
-            if(states.empty()){
-                
-                cout<<"States is empty!\n";
-                return false;
-            }
-        }
+        
         if(states.empty()) return false;
         if(states.top()->depth <= maxDepth){
             
             stack<stateData*>* newStateData = getNextStates(top());
+            cout<<"-----------------Total generated moves: "<<newStateData->size()<<"\n";
+            // cout<<"Getting the new states\n";
+            getVisitedPath(newStateData);
             if (convertToData(newStateData)){ return true;};
-            cout<<"Visited dictionary size: "<<visitedStates.size()<<"\n";
         } else {
-            cout<<"No items in stack?\n";
-            return false;
-            
-        }
-        cout<<"Current States: \n";
-        stack<stateData * > currStates = states;
-        i = currStates.size();
-        while ( i > 0){
-            cout<<"<-- Current State: "<<currStates.top()->state<<"\n";
-            currStates.pop();
-            --i;
+            if (states.empty()) return false;
+            while(states.top()->depth > maxDepth){
+                delete states.top(); 
+                states.pop();
+                if(states.empty()){
+                    // cout<<"Found the end of the list with no correct depth value!\n";
+                    return false;
+                }
+            }
         }
         return false;
         
@@ -85,31 +103,46 @@ class PDState : public stateFactory{
     bool isEmpty(){
         return states.empty();
     }
+    string getPath(string goal){
+        return visitedPath[goal].data;
+    }
 
-
+    
 
 };
+    void progressiveDeepeningSearch_VisitedListAlgorithm(string origin, string goal){
+        int level = 2;
+            PDState* stateManager = new PDState(origin, level);
+            stateManager->setGoal(goal);
+            while(!stateManager->step()){
+                if(stateManager->isEmpty()){
+                    delete stateManager;
+                    level+=5;
+                    stateManager = new PDState(origin, level);
+                    stateManager->setGoal(goal);
+                    //cout<<"Resetting the states!\n";
+                    
+                }
+            }
+            cout<<"Getting state manager enqueue & dequeue states:\n";
+            cout<<"Enqueue: "<<stateManager->getEnqueue()<<"\n";
+            cout<<"Dequeue: "<<stateManager->getDequeue()<<"\n";
+            cout<<"Path to item: "<<stateManager->getPath(goal)<<"\n";
+            
+            
+            delete stateManager;
+            
+
+    }
 
 int main(){
     //string progressiveDeepeningSearch_VisitedList
     //(string const initialState, string const goalState, int &numOfStateExpansions, 
     //int& maxQLength, float &actualRunningTime, int ultimateMaxDepth){
     string goalState;
-    cout<<"Enter the goal state\n";
+    int i = -1;
+   
+    progressiveDeepeningSearch_VisitedListAlgorithm("185024367", "185204367");
     
-    while (true){
-        if(getline(cin, goalState)){
-            PDState* stateManager = new PDState("012345678", 12);
-            stateManager->setGoal(goalState);
-            for(int i = 0; i <= 1000; ++i){
-                cout<<"\n\nLoop: "<<i<<"\n-----------------\n";
-                if(stateManager->step()){
-                    break;
-                };
-                cout<<"Finished Loop level "<<i<<"\n";
-            }
-            delete stateManager;
-            cout<<"Enter the goal state\n";
-        }
-    }
+    
 }
