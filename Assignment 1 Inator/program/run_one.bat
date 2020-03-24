@@ -45,7 +45,7 @@ if %selection% == 1 (
 
 
 if %testcase% == 1 (    
-    set param2= 608435127 123456780
+    set param2= 087654321 123456780
         
 ) else if %testcase% == 2 (
     set param2= 743286051 123456780
