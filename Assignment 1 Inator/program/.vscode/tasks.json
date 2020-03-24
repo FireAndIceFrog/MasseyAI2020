@@ -9,14 +9,25 @@
             "type": "shell",
             "command": "g++",
             "args": [
-               "-o", "*.cpp"
+                "-o",
+                "*.cpp"
+            ]
+        },
+        {
+            "label": "PDFS",
+            "group": "build",
+            "type": "shell",
+            "command": "g++ -o PDFS.exe PDFS.cpp SHA.cpp",
+            "args": [],
+            "problemMatcher": [
+                "$gcc"
             ]
         },
         {
             "label": "min32-build",
             "group": "build",
             "type": "shell",
-            "command": "mingw32-make makefile Main.exe clean",
+            "command": "mingw32-make makefile Main.exe clean"
         }
     ]
 }

@@ -9,5 +9,5 @@
     // 3. when you want to delete an entry, use the remove keyword
     // 4. to get the data from any entry, use the get keyword.
     #include "hashTable.cpp"
-    #include "SHA.h"
+    
 #endif 

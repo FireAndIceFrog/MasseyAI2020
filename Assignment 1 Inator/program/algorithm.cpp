@@ -1,6 +1,10 @@
 
 
 #include "algorithm.h"
+#include "state.cpp"
+#include "PDFS.h"
+#include "PDFNS.h"
+
 
 using namespace std;
 
@@ -92,17 +96,20 @@ string progressiveDeepeningSearch_VisitedList(string const initialState, string 
 	// cout << "------------------------------" << endl;
  //    cout << "<<progressiveDeepeningSearch_VisitedList>>" << endl;
  //    cout << "------------------------------" << endl;
-
+	PDFS* item = new PDFS();
 	startTime = clock();
-	srand(time(NULL)); //RANDOM NUMBER GENERATOR - ONLY FOR THIS DEMO.  YOU REALLY DON'T NEED THIS! DISABLE THIS STATEMENT.
-	maxQLength= rand() % 500; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY.
-	numOfStateExpansions = rand() % 600; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY
-
+    path = item->start(initialState, goalState, &numOfStateExpansions,&maxQLength,  &ultimateMaxDepth );
 	
+	// srand(time(NULL)); //RANDOM NUMBER GENERATOR - ONLY FOR THIS DEMO.  YOU REALLY DON'T NEED THIS! DISABLE THIS STATEMENT.
+	// maxQLength= rand() % 500; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY.
+	// numOfStateExpansions = rand() % 600; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY
+
+	// progressiveDeepeningSearch_VisitedListAlgorithm(initialState, goalState, &numOfStateExpansions , 
+    // &maxQLength, &ultimateMaxDepth, &path);
 	
 //***********************************************************************************************************
 	actualRunningTime = ((float)(clock() - startTime)/CLOCKS_PER_SEC);
-	path = "DDRRLLLUUURDLUDURDLUU";  //this is just a dummy path for testing the function           
+	// path = "DDRRLLLUUURDLUDURDLUU";  //this is just a dummy path for testing the function           
 	return path;		
 		
 }
@@ -127,15 +134,18 @@ string progressiveDeepeningSearch_NonStrict_VisitedList(string const initialStat
  //    cout << "------------------------------" << endl;
 
 	startTime = clock();
-	srand(time(NULL)); //RANDOM NUMBER GENERATOR - ONLY FOR THIS DEMO.  YOU REALLY DON'T NEED THIS! DISABLE THIS STATEMENT.
-	maxQLength= rand() % 500; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY.
-	numOfStateExpansions = rand() % 600; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY
+	PDFNS* item = new PDFNS();
+	startTime = clock();
+    path = item->start(initialState, goalState, &numOfStateExpansions,&maxQLength,  &ultimateMaxDepth );
+	// srand(time(NULL)); //RANDOM NUMBER GENERATOR - ONLY FOR THIS DEMO.  YOU REALLY DON'T NEED THIS! DISABLE THIS STATEMENT.
+	// maxQLength= rand() % 500; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY.
+	// numOfStateExpansions = rand() % 600; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY
 
 	
 	
 //***********************************************************************************************************
 	actualRunningTime = ((float)(clock() - startTime)/CLOCKS_PER_SEC);
-	path = "LR";  //this is just a dummy path for testing the function           
+	// path = "LR";  //this is just a dummy path for testing the function           
 	return path;		
 		
 }

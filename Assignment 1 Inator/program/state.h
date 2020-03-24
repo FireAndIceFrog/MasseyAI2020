@@ -1,14 +1,12 @@
-#ifndef _state_h
-#define _state_h
-#include<iostream>
-#include<cstdlib>
-#include<string>
-#include<cstdio>
-#include <sstream>
-#include <random>
+#ifndef _state_H
+#define _state_H
+#include "hashTable.h"
 #include <ctime>
-#include <stack>
+#include <string>
+#include <iostream>
+#include <algorithm>
+#include <cstdlib>
+#include <vector>
 #include "state.cpp"
-    
 
 #endif

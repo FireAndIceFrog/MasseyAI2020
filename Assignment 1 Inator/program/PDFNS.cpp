@@ -1,0 +1,210 @@
+
+#include "hashTable.h"
+#include <ctime>
+#include <string>
+#include <iostream>
+#include <algorithm>
+#include <cstdlib>
+#include <vector>
+
+#include "state.cpp"
+
+
+#include <fstream>
+
+
+
+class PDFNS: public state {
+    protected:
+    int maxDepth;
+
+    
+    
+    public:
+    PDFNS& setMaxDepth(int maxDepth){this->maxDepth = maxDepth; return *this; }
+    int getMaxDepth() {return maxDepth; }
+    PDFNS():state(){ maxDepth = 0;  };
+    //set the init state, return this
+    //1.Initialize Q with search node (s) as only entry (already implemented)
+
+    //2.If Q is empty, fail. Otherwise pick a node from Q
+    //this is to be overridden by a child class - return the index to be removed, the step function will handle the removal of the item
+    int selectItem(int depth, int cost){
+        int size = states->size();
+        if(size <= 0) {
+            return -1;
+        } else {
+            //because we are working with a vector -> return the max value (for optimization!) 
+            //size of vector with 1 element = 1. index of that element is 0.
+            return size-1;
+        }
+    }
+    //3. IF state is goal, return it otherwise remove item from queue
+    //4.Find all the decendants of the state N (not visited) + create all one step extensions of N
+    
+    vector<stateNode*>* getChildNodes(stateNode* curr, bool* passed){
+        int pos = curr->path.find("0");
+        vector<stateNode*>* childStates = new vector<stateNode*>();
+        //only expand if the maxDepth > current depth, else ignore this node.
+        if(curr->depth+1 < maxDepth){
+            *passed = true;
+            for (int i = 0; i < 4; ++i){
+                //if the states are done, skip them.
+                if(statePointers[pos][i] == -1) continue;
+                stateNode* state = createState(genString(pos, statePointers[pos][i], curr->path));
+                //set the state to +1 depth
+                state->depth = curr->depth+1;
+                //directions in the pointer nods is calculated as (positions are  LEFT UP RIGHT DOWN)
+                switch (i)
+                {
+                case (0):
+                    //LEFT. Set direction to 'l' + parent's direction
+                    state->direction = curr->direction + "L"  ;
+                    break;
+                case (1):
+                    //UP. Set direction to 'u' + parent's direction
+                    state->direction = curr->direction + "U";
+                    break;
+                case (2):
+                    //Right. Set direction to 'r' + parent's direction
+                    state->direction = curr->direction + "R";
+                    break;
+                case (3):
+                    //DOWN. Set direction to 'd' + parent's direction
+                    state->direction = curr->direction + "D" ;
+                    break;
+                
+                default:
+                    break;
+                }
+                
+                //if it is in the visited list, skip it!
+                if((*visitedStates)[state->path].visited){ 
+                    if((*visitedStates)[state->path].depth>state->depth ){
+                        //if the current state is shallower than the current visited, set visited to current depth & add to list
+                        (*visitedStates)[state->path].depth=state->depth; 
+                        childStates->push_back(state);
+                    } else {
+                        delete state; continue;
+                    }
+                } else {
+                    //else put it in the tree
+                    // cout<<"Adding the state: "<<state->path<<"\n";
+                      
+
+                    (*visitedStates)[state->path] = createVisited(state->depth);
+                    //add the children states to the list.
+                    
+                    childStates->push_back(state); 
+                }
+            }
+        } else *passed = false;
+        return childStates;
+
+            
+    }
+    //5. Add extended paths to the Q; Add all children to visited
+    // The step function will handle selecting, removal and deletion from the list. 
+    stateNode* step(bool* passed){
+        stateNode* curr;
+        int index = selectItem(0,0);
+        //if states is empty -> return null
+        if(index < 0) throw "Ran out of expandable nodes";
+        
+        this->enqueue++;
+        //check for goal
+         if((*states)[index]->path == goalState)  return (*states)[index]; 
+        //otherwise remove from the list
+        curr = (*states)[index];
+        states->pop_back();
+        //get all the children nodes, return false if outside depth range
+        vector<stateNode*>* children = getChildNodes(curr, passed);
+        
+    
+        while (!children->empty()){
+            states->push_back((*children)[children->size()-1]);
+            (*children)[children->size()-1] = nullptr;
+            children->pop_back();
+        }
+        delete children;
+
+
+        *passed = (states->size()!=0);
+        this->maxQueueSize = this->max(this->maxQueueSize, states->size());
+
+        delete curr;
+        return nullptr;
+    }
+
+    //6.Go to step 2
+    //this will handle any extre features that the list will control.
+    string start(string const initialState, string const goalState, 
+        int *numOfStateExpansions, int*maxQLength,  int *ultimateMaxDepth){
+        string moves;
+        maxDepth = 2;
+        int step = 5;
+        int currentDepth = 0;
+        bool passed = true;
+        this->setInitState(initialState).setGoalState(goalState);
+        stateNode* finalState = nullptr;
+
+        while (finalState == nullptr){
+            if(!passed){
+                maxDepth += step;
+                this->setInitState(initialState);
+                this->setGoalState(goalState);
+                passed = true;
+                
+            }
+            string str;
+            try {
+                finalState = this->step(&passed) ;
+            }
+            catch(const char* e)
+            {
+                std::cerr << e << '\n';
+                break;
+            }
+            
+        }
+        //set the returnables.
+        *numOfStateExpansions = this->enqueue;
+        *maxQLength = this->maxQueueSize;
+        *ultimateMaxDepth = finalState->depth;
+        moves = finalState->direction;
+        return moves;
+    }
+    
+
+    
+
+    
+
+
+
+
+};
+// int main() {
+    
+//     string const initialState = "123456780";
+//     string const goalState = "087654321"; 
+//     int numOfStateExpansions = 0;
+//     int maxQLength = 0;
+//     int ultimateMaxDepth = 0;
+//     string moves = "";
+
+//     PDFNS item = PDFNS();
+//     moves = item.start(initialState, goalState, &numOfStateExpansions,&maxQLength,  &ultimateMaxDepth );
+//     cout<<"------------------------\n";
+//     cout<<"Init: "<<initialState<<"\n";
+//     cout<<"Goal: "<<goalState<<"\n";
+//     cout<<"State expansions: "<<numOfStateExpansions<<"\n";
+//     cout<<"Q Length: "<<maxQLength<<"\n";
+//     cout<<"Ultimate Depth: "<<ultimateMaxDepth<<"\n";
+//     cout<<"Moves: "<<moves<<"\n";
+//     cout<<"------------------------\n";
+
+
+
+
+// }
