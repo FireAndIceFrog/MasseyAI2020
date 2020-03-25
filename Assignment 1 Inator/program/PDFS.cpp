@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "state.cpp"
-
+#include <thread>
 
 #include <fstream>
 
@@ -41,53 +41,69 @@ class PDFS: public state {
     }
     //3. IF state is goal, return it otherwise remove item from queue
     //4.Find all the decendants of the state N (not visited) + create all one step extensions of N
-    
-    vector<stateNode*>* getChildNodes(stateNode* curr, bool* passed){
-        int pos = curr->path.find("0");
-        vector<stateNode*>* childStates = new vector<stateNode*>();
-        //only expand if the maxDepth > current depth, else ignore this node.
-        if(curr->depth+1 < maxDepth){
-            *passed = true;
-            for (int i = 0; i < 4; ++i){
-                //if the states are done, skip them.
-                if(statePointers[pos][i] == -1) continue;
-                stateNode* state = createState(genString(pos, statePointers[pos][i], curr->path));
+    void getNode(int ZeroIndex, int direction, stateNode* curr, stateNode &state){
+        //if the states are done, skip them.
+                if(statePointers[ZeroIndex][direction] == -1) return;
+                //if it is in the visited list, skip it!
+                string newPath = genString(ZeroIndex, statePointers[ZeroIndex][direction], curr->path);
+                //if the node is visited already, dont expand.
+                if((*visitedStates)[newPath].visited){  return;}
+                state = createState(newPath);
                 //set the state to +1 depth
-                state->depth = curr->depth+1;
+                state.depth = curr->depth+1;
                 //directions in the pointer nods is calculated as (positions are  LEFT UP RIGHT DOWN)
-                switch (i)
+                switch (direction)
                 {
                 case (0):
                     //LEFT. Set direction to 'l' + parent's direction
-                    state->direction = curr->direction + "L"  ;
+                    state.direction = curr->direction + "L"  ;
                     break;
                 case (1):
                     //UP. Set direction to 'u' + parent's direction
-                    state->direction = curr->direction + "U";
+                    state.direction = curr->direction + "U";
                     break;
                 case (2):
                     //Right. Set direction to 'r' + parent's direction
-                    state->direction = curr->direction + "R";
+                    state.direction = curr->direction + "R";
                     break;
                 case (3):
                     //DOWN. Set direction to 'd' + parent's direction
-                    state->direction = curr->direction + "D" ;
+                    state.direction = curr->direction + "D" ;
                     break;
                 
                 default:
                     break;
                 }
-                //if it is in the visited list, skip it!
-                if((*visitedStates)[state->path].visited){ delete state; continue;}
-                else {
-                    //else put it in the tree
-                    // cout<<"Adding the state: "<<state->path<<"\n";
-                    
-                    (*visitedStates)[state->path] = createVisited();
-                    //add the children states to the list.
-                    
-                    childStates->push_back(state); 
-                }
+                
+                
+                //else put it in the tree
+                // cout<<"Adding the state: "<<state.path<<"\n";
+                
+                (*visitedStates)[state.path] = createVisited();
+                //add the children states to the list.
+    }
+    vector<stateNode>* getChildNodes(stateNode curr, bool* passed){
+        int pos = curr.path.find("0");
+        thread threadPool[4];
+        stateNode stateManager[4];
+        vector<stateNode>* childStates = new vector<stateNode>();
+        //only expand if the maxDepth > current depth, else ignore this node.
+        if(curr.depth+1 < maxDepth){
+            *passed = true;
+            stateNode defaultState = stateNode();
+            defaultState.path = "";
+            for (int i = 0; i < 4; ++i){
+                stateManager[i] = defaultState;
+                threadPool[i] = thread(&PDFS::getNode,this,pos, i, &curr, ref(stateManager[i]));
+                threadPool[i].join();
+            }
+            for (int i = 0; i < 4; ++i){
+                
+                // stateManager[i] = nullptr;
+                // getNode(pos, i, curr, stateManager[i]);
+                if(stateManager[i].path == defaultState.path) continue;
+                childStates->push_back(stateManager[i]); 
+                
             }
         } else *passed = false;
         return childStates;
@@ -96,25 +112,25 @@ class PDFS: public state {
     }
     //5. Add extended paths to the Q; Add all children to visited
     // The step function will handle selecting, removal and deletion from the list. 
+    
     stateNode* step(bool* passed){
-        stateNode* curr;
+        stateNode curr;
         int index = selectItem(0,0);
         //if states is empty -> return null
         if(index < 0) throw "Ran out of expandable nodes";
         
         this->enqueue++;
         //check for goal
-         if((*states)[index]->path == goalState)  return (*states)[index]; 
+         if((*states)[index].path == goalState)  return &(*states)[index]; 
         //otherwise remove from the list
         curr = (*states)[index];
         states->pop_back();
         //get all the children nodes, return false if outside depth range
-        vector<stateNode*>* children = getChildNodes(curr, passed);
+        vector<stateNode>* children = getChildNodes(curr, passed);
         
     
         while (!children->empty()){
             states->push_back((*children)[children->size()-1]);
-            (*children)[children->size()-1] = nullptr;
             children->pop_back();
         }
         delete children;
@@ -123,9 +139,9 @@ class PDFS: public state {
         *passed = (states->size()!=0);
         this->maxQueueSize = this->max(this->maxQueueSize, states->size());
 
-        delete curr;
         return nullptr;
     }
+
 
     //6.Go to step 2
     //this will handle any extre features that the list will control.

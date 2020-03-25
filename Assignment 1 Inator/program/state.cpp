@@ -56,15 +56,15 @@ class state {
         string initState;
         string goalState;
 
-        vector<stateNode*>* states;
+        vector<stateNode>* states;
         dict<visitedNode>* visitedStates;
     //function to create a simple node
-    stateNode* createState(string path = "", string direction = "", int depth = 0, int cost = 0 ){
-        stateNode* returnable = new stateNode();
-        returnable->path = path;
-        returnable->direction = direction;
-        returnable->depth = depth;
-        returnable->cost = cost;
+    stateNode createState(string path = "", string direction = "", int depth = 0, int cost = 0 ){
+        stateNode returnable = stateNode();
+        returnable.path = path;
+        returnable.direction = direction;
+        returnable.depth = depth;
+        returnable.cost = cost;
         return returnable;
     }
     visitedNode createVisited(int depth = 0, int cost = 0 ){
@@ -98,7 +98,7 @@ class state {
             //state for the visited node
             visitedStates = new dict<visitedNode>(defaultNode);
             //state for the queue.
-            states = new vector<stateNode*>();
+            states = new vector<stateNode>();
 
         };
     ~state(){
@@ -109,12 +109,6 @@ class state {
     }
     void deleteStates(){
         int i = 0;
-        for(i = 0; i < states->size() ; ++i){
-            stateNode* state = (*states)[i];
-            (*states)[i] = nullptr;
-            delete state;
-            //remove the last element.
-        }
         delete states;
         
     }
@@ -128,7 +122,7 @@ class state {
         //state for the visited node
         visitedStates = new dict<visitedNode>(defaultNode);
         //state for the queue.
-        states = new vector<stateNode*>();
+        states = new vector<stateNode>();
         //once we have the visited states
         (*visitedStates)[init] = createVisited();
         initState = init; 
