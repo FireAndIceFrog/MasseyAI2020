@@ -1,13 +1,13 @@
 #ifndef _state_H
 #define _state_H
-#include "hashTable.h"
 #include <ctime>
 #include <string>
 #include <iostream>
 #include <algorithm>
 #include <cstdlib>
 #include <vector>
-
+#include <map>
+using namespace std;
 class state {
         
         
@@ -23,16 +23,19 @@ class state {
         }
         int *statePointers[8];
         void setUpStatePointers(){
-            //to work out direction, put (-1) as a place holder (positions are LEFT UP RIGHT DOWN)
-            statePointers[0] = new int[4] {-1,-1,1,3};
-            statePointers[1] = new int[4] {0,-1,2,4};
-            statePointers[2] = new int[4] {1,-1,-1,5};
-            statePointers[3] = new int[4] {-1,0,4,6};
-            statePointers[4] = new int[4] {3,1,5,7};
-            statePointers[5] = new int[4] {4,2,-1,8};
-            statePointers[6] = new int[4] {-1,3,7,-1};
-            statePointers[7] = new int[4] {6,4,8,-1};
-            statePointers[8] = new int[4] {7,5,-1,-1};
+            //to work out direction, put (-1) as a place holder (positions are DOWN RIGHT UP LEFT)
+            // 0 1 2
+            // 3 4 5
+            // 6 7 8
+            statePointers[0] = new int[4] {3,1,-1,-1};
+            statePointers[1] = new int[4] {4,2,-1,0};
+            statePointers[2] = new int[4] {5,-1,-1,1};
+            statePointers[3] = new int[4] {6,4,0,-1};
+            statePointers[4] = new int[4] {7,5,1,3};
+            statePointers[5] = new int[4] {8,-1,2,4};
+            statePointers[6] = new int[4] {-1,7,3,-1};
+            statePointers[7] = new int[4] {-1,8,4,6};
+            statePointers[8] = new int[4] {-1,-1,5,7};
         }
         void deleteStatePointers(){
             for (int i = 0; i < 8; ++i){
@@ -57,7 +60,7 @@ class state {
         string goalState;
 
         vector<stateNode>* states;
-        dict<visitedNode>* visitedStates;
+        map<string, visitedNode>* visitedStates;
     //function to create a simple node
     stateNode createState(string path = "", string direction = "", int depth = 0, int cost = 0 ){
         stateNode returnable = stateNode();
@@ -91,12 +94,8 @@ class state {
             maxQueueSize = 0;
             goalState = "";
             initState = "";
-            //set up the default node
-            defaultNode.cost = 0;
-            defaultNode.depth = 0;
-            defaultNode.visited = false;
             //state for the visited node
-            visitedStates = new dict<visitedNode>(defaultNode);
+            visitedStates = new map<string, visitedNode>();
             //state for the queue.
             states = new vector<stateNode>();
 
@@ -120,7 +119,7 @@ class state {
         delete visitedStates;
         deleteStates();
         //state for the visited node
-        visitedStates = new dict<visitedNode>(defaultNode);
+        visitedStates = new map<string, visitedNode>();
         //state for the queue.
         states = new vector<stateNode>();
         //once we have the visited states

@@ -1,6 +1,5 @@
 #ifndef state_PDFS_H_
 #define state_PDFS_H_
-#include "hashTable.h"
 #include <ctime>
 #include <string>
 #include <iostream>

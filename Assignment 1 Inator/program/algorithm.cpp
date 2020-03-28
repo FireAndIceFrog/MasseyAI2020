@@ -2,8 +2,9 @@
 
 #include "algorithm.h"
 #include "state.cpp"
-#include "PDFS.h"
 #include "PDFNS.h"
+#include "PDFS.h"
+
 
 
 using namespace std;
@@ -133,8 +134,7 @@ string progressiveDeepeningSearch_NonStrict_VisitedList(string const initialStat
  //    cout << "<<progressiveDeepeningSearch_NonStrict_VisitedList>>" << endl;
  //    cout << "------------------------------" << endl;
 
-	startTime = clock();
-	PDFNS* item = new PDFNS();
+	PDFNS* item =new PDFNS();
 	startTime = clock();
     path = item->start(initialState, goalState, &numOfStateExpansions,&maxQLength,  &ultimateMaxDepth );
 	// srand(time(NULL)); //RANDOM NUMBER GENERATOR - ONLY FOR THIS DEMO.  YOU REALLY DON'T NEED THIS! DISABLE THIS STATEMENT.
