@@ -9,7 +9,7 @@ using namespace std;
 
 tuple<int,int> calcLoc(string str, char c){
     //function to calculate the location of a char
-    int index = 1, j;
+    int index = 1;
     int inputNum = c - '0';
     int res[3];
     while (inputNum > 0 && index>=0) 
