@@ -62,10 +62,10 @@ class state {
         vector<stateNode>* states;
         map<string, visitedNode>* visitedStates;
     //function to create a simple node
-    stateNode createState(string path = "", string direction = "", int depth = 0, int cost = 0 ){
+    stateNode createState(string path = "", int depth = 0, int cost = 0 ){
         stateNode returnable = stateNode();
         returnable.path = path;
-        returnable.direction = direction;
+        returnable.direction = "";
         returnable.depth = depth;
         returnable.cost = cost;
         return returnable;
