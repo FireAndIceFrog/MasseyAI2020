@@ -37,7 +37,7 @@ class state {
             statePointers[7] = new int[4] {-1,8,4,6};
             statePointers[8] = new int[4] {-1,-1,5,7};
         }
-        void deleteStatePointers(){
+        void deleteStatePointers(){     //For the Destructor
             for (int i = 0; i < 8; ++i){
                 delete statePointers[i];
             }
@@ -51,11 +51,13 @@ class state {
             int cost;
             int depth;
         } goalNode;
+        
         struct visitedNode{
             bool visited;
             int depth;
             int cost;
         }defaultNode;
+
         string initState;
         string goalState;
 
