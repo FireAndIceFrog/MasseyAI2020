@@ -35,7 +35,7 @@ class BFV: public BF {
                 if(statePointers[ZeroIndex][direction] == -1) return;
                 //if it is in the visited list, skip it!
                 string newPath = genString(ZeroIndex, statePointers[ZeroIndex][direction], curr->path);
-                int cost = misplacedH(this->initState, this->goalState);
+                int cost = manhattanH(this->initState, this->goalState);
                 //get a list of the returnables.
 
                 if ((*visitedStates)[newPath].visited ) return;

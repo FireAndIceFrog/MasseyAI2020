@@ -181,7 +181,7 @@ class BF: public state {
             //parse the array and find the position to insert at.
             
             //insert at position IT, decrement the size
-            while ((*it).cost >= children.back().cost && it != states->begin()) --it;
+            while ((*it).cost < children.back().cost && it != states->end()) --it;
             states->insert(it,children.back());
             children.pop_back();
         }
