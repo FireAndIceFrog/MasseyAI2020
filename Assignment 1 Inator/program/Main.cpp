@@ -262,6 +262,7 @@ void AnimateSolution(string const initialState, string const goalState, string p
       displayBoard(strState);
       
       step++;
+      getch();
 	}
 	
 	delete p; //clear memory	

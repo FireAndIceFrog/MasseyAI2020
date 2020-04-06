@@ -8,6 +8,9 @@
 #include <algorithm>
 #include <cstdlib>
 
+#include "state.cpp"
+#include "PDFS.h"
+#include "PDFNS.h"
 #include "puzzle.h"
 
 //Function prototypes
