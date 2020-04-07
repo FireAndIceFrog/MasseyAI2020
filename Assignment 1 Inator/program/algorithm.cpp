@@ -30,9 +30,14 @@ string bestFirstSearch_No_VisitedList(string const initialState, string const go
  //    cout << "------------------------------" << endl;
 
 	startTime = clock();
-	BFV* item = new BFV();
+	BFV* item = new BFV(initialState, goalState);
 	startTime = clock();
-    path = item->start(initialState, goalState, &numOfStateExpansions,&maxQLength );
+	item->search();
+    path = item->getPath();
+	numOfStateExpansions = item->getStateExpansions();
+	maxQLength = item->getMaxQLen();
+
+
 
 	// srand(time(NULL)); //RANDOM NUMBER GENERATOR - ONLY FOR THIS DEMO.  YOU REALLY DON'T NEED THIS! DISABLE THIS STATEMENT.
 	// maxQLength= rand() % 800; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY.
@@ -63,20 +68,28 @@ string bestFirstSearch_with_VisitedList(string const initialState, string const 
 
     //algorithm implementation
 	// cout << "------------------------------" << endl;
- //    cout << "<<bestFirstSearch_with_VisitedList>>" << endl;
+ //    cout << "<<bestFirstSearch_No_VisitedList>>" << endl;
  //    cout << "------------------------------" << endl;
 
 	startTime = clock();
-	
-	srand(time(NULL)); //RANDOM NUMBER GENERATOR - ONLY FOR THIS DEMO.  YOU REALLY DON'T NEED THIS! DISABLE THIS STATEMENT.
-	maxQLength= rand() % 800; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY.
-	numOfStateExpansions = rand() % 600; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY
+	BFV* item = new BFV(initialState, goalState);
+	startTime = clock();
+	item->search();
+    path = item->getPath();
+	numOfStateExpansions = item->getStateExpansions();
+	maxQLength = item->getMaxQLen();
 
-    // cout << "I'm running inside bestFirstSearch with the Visited list" << endl;
+
+
+	// srand(time(NULL)); //RANDOM NUMBER GENERATOR - ONLY FOR THIS DEMO.  YOU REALLY DON'T NEED THIS! DISABLE THIS STATEMENT.
+	// maxQLength= rand() % 800; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY.
+	// numOfStateExpansions = rand() % 600; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY
+
+    // cout << "I'm running inside Best First Search without the Visited list" << endl;
 	
 //***********************************************************************************************************
 	actualRunningTime = ((float)(clock() - startTime)/CLOCKS_PER_SEC);
-	path = "DDRRLLLUUURDLUDURDLUU";  //this is just a dummy path for testing the function           
+	// path = "DDRRLLLUUURDLUDURDLUU";  //this is just a dummy path for testing the function           
 	return path;		
 		
 }

@@ -7,75 +7,111 @@
 #include <cstdlib>
 #include <vector>
 #include <thread>
-
-#include "bestFirst.cpp"
+#include <functional>
 #include <thread>
-
+#include "puzzle.h"
 #include <fstream>
+#include <queue>
+#include <unordered_set>
 
 using namespace std;
 
-class BFV: public BF {
-    protected:
-    int maxDepth;
-    thread stateRemoverThreads[4];
-    
-    
+class BFV {
+    private:
+    priority_queue<Puzzle, std::vector<Puzzle>, std::greater<Puzzle> > stateQueue;
+    unordered_set<std::string> visited;
+    size_t maxQLen;
+    string path;
+    string init;
+    string goal;
+    int stateExpansions;
     public:
-    BFV():BF(){  };
-    //THis is a best-first with a closed list.
-    //set the init state, return this
-    //1.Initialize Q with search node (s) as only entry (already implemented)
-    //2.If Q is empty, fail. Otherwise pick a node from Q
-    //this is to be overridden by a child class - return the index to be removed, the step function will handle the removal of the item
-    //3. IF state is goal, return it otherwise remove item from queue
-    //4.Find all the decendants of the state N (not visited) + create all one step extensions of N
-    void getChild(int ZeroIndex, int direction, stateNode* curr, stateNode &state){
-        //if the states are done, skip them.
-                if(statePointers[ZeroIndex][direction] == -1) return;
-                //if it is in the visited list, skip it!
-                string newPath = genString(ZeroIndex, statePointers[ZeroIndex][direction], curr->path);
-                int cost = manhattanH(this->initState, this->goalState);
-                //get a list of the returnables.
-
-                if ((*visitedStates)[newPath].visited ) return;
-                else  (*visitedStates)[newPath] = createVisited(0,cost);
-                
-                
-                state = createState(newPath,0,cost);
-                //directions in the pointer nods is calculated as (positions are  DOWN RIGHT UP LEFT)
-                switch (direction)
-                {
-                case (3):
-                    //LEFT. Set direction to 'l' + parent's direction
-                    state.direction = curr->direction + "L"  ;
-                    break;
-                case (2):
-                    //UP. Set direction to 'u' + parent's direction
-                    state.direction = curr->direction + "U";
-                    break;
-                case (1):
-                    //Right. Set direction to 'r' + parent's direction
-                    state.direction = curr->direction + "R";
-                    break;
-                case (0):
-                    //DOWN. Set direction to 'd' + parent's direction
-                    state.direction = curr->direction + "D" ;
-                    break;
-                
-                default:
-                    break;
-                }
-                
-                
-                // cout<<"Adding the state: "<<state.path<<"\n";
+    //set up the base variables.
+    BFV(string start, string goal):maxQLen{0}, path{""},goal{goal}, init{start}, stateExpansions{0}{
+        
     }
 
-    
+    string getPath(){
+        return path;
+    }
+    int getStateExpansions(){
+        return stateExpansions;
+    }
+    size_t getMaxQLen() {
+        return maxQLen;
+    }
+    void search(){
+        Puzzle curr = Puzzle(init, goal);
+        int heuristic = manhattanDistance;
+        string nl = "\n";
+        //1.Initialize Q with search node (s) as only entry
+        stateQueue.push(curr);
+        visited.insert(init);
+        while(!stateQueue.empty()){
+            //2.If Q is empty, fail. Otherwise pick a node from Q
+            curr = stateQueue.top();
+            stateQueue.pop();
+            //3. IF state is goal, return it otherwise remove item from queue
+            if (curr.toString() == goal) { path = curr.getPath(); return; }
+            ++stateExpansions;
+            //4.Find all the decendants of the state N (not visited) + create all one step extensions of N
+            if(curr.canMoveDown()) {
+                Puzzle* child = curr.moveDown();
+                child->updateHCost(heuristic);
+                //moving to stack This is mostly constant time.
+                if(visited.count(child->toString()) == 0) { 
+                    stateQueue.push(Puzzle(*child));
+                    visited.insert(child->toString());
+                }
+                delete child;
+
+            } 
+            if(curr.canMoveRight()) {
+                Puzzle* child = curr.moveRight();
+                child->updateHCost(heuristic);
+                //moving to stack This is mostly constant time.
+                if(visited.count(child->toString()) == 0) { 
+                    stateQueue.push(Puzzle(*child));
+                    visited.insert(child->toString());
+                }
+                delete child;
+
+            } 
+            if(curr.canMoveUp()) {
+                Puzzle* child = curr.moveUp();
+                child->updateHCost(heuristic);
+                //moving to stack This is mostly constant time.
+                if(visited.count(child->toString()) == 0) { 
+                    stateQueue.push(Puzzle(*child));
+                    visited.insert(child->toString());
+                }
+                delete child;
+
+            }
+            if(curr.canMoveLeft()) {
+                Puzzle* child = curr.moveLeft();
+                child->updateHCost(heuristic);
+                //moving to stack This is mostly constant time.
+                if(visited.count(child->toString()) == 0) { 
+                    stateQueue.push(Puzzle(*child));
+                    visited.insert(child->toString());
+                }
+                delete child;
+            }
+            // cout<<"Q Len: "<<stateQueue.size()<<"\n";
+            //5. Add extended paths to the Q; Add all children to visited
+            maxQLen = std::max(maxQLen, stateQueue.size());
+            //6.Go to step 2
+
+
+        }
+
+    }
 
 
 
-
+   
+   
 };
 #endif
 // int main() {
@@ -84,17 +120,16 @@ class BFV: public BF {
 //     string const goalState = "087654321"; 
 //     int numOfStateExpansions = 0;
 //     int maxQLength = 0;
-//     int ultimateMaxDepth = 0;
 //     string moves = "";
 
-//     PDFS item = PDFS();
-//     moves = item.start(initialState, goalState, &numOfStateExpansions,&maxQLength,  &ultimateMaxDepth );
+//     BFV item = BFV(initialState, goalState);
+//     item.search();
+//     moves = item.getPath();
 //     cout<<"------------------------\n";
 //     cout<<"Init: "<<initialState<<"\n";
 //     cout<<"Goal: "<<goalState<<"\n";
-//     cout<<"State expansions: "<<numOfStateExpansions<<"\n";
-//     cout<<"Q Length: "<<maxQLength<<"\n";
-//     cout<<"Ultimate Depth: "<<ultimateMaxDepth<<"\n";
+//     cout<<"State expansions: "<<item.getStateExpansions()<<"\n";
+//     cout<<"Q Length: "<<item.getMaxQLen()<<"\n";
 //     cout<<"Moves: "<<moves<<"\n";
 //     cout<<"------------------------\n";
 

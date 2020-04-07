@@ -4,6 +4,15 @@
 
 using namespace std;
 
+////////////////////////////////////////
+//Operator Overloads
+////////////////////////////////////////
+bool operator> (  const Puzzle&  lhs, const Puzzle& rhs){
+	// cout<<"LHS: "<<lhs.getHCost()<<" > "<<"RHS: "<<rhs.getHCost()<<"\n";
+	return lhs.getHCost() > rhs.getHCost();
+}
+
+
 //////////////////////////////////////////////////////////////
 //constructor
 //////////////////////////////////////////////////////////////
@@ -73,9 +82,11 @@ int Puzzle::getDepth(){
 	return depth;
 }
 
-void Puzzle::updateHCost(heuristicFunction hFunction){
+void Puzzle::updateHCost(int hFunction){
+	
 	hCost = h(hFunction);
 }
+
 
 void Puzzle::updateFCost(){
 	//fCost = ?
@@ -85,7 +96,7 @@ int Puzzle::getFCost(){
 	return fCost;
 }
 
-int Puzzle::getHCost(){
+int Puzzle::getHCost() const{
 	return hCost;
 }
 
@@ -93,22 +104,46 @@ int Puzzle::getGCost(){
 	return pathLength;
 }
 
+
+
 //Heuristic function implementation
-int Puzzle::h(heuristicFunction hFunction){
+int Puzzle::h(int hFunction){
 	
 	int sum=0;
 	int h=0;
 	int numOfMisplacedTiles=0;
 	
 	switch(hFunction){
-		case misplacedTiles:			      
+		case 0:			      
 				//place your implementation here	
-                h = numOfMisplacedTiles; 					
+                h = numOfMisplacedTiles;
+				for(int i=0; i < 3; i++){
+					for(int j=0; j < 3; j++){	
+						if(board[i][j] != 0 && board[i][j] != goalBoard[i][j]){
+							++numOfMisplacedTiles;
+						}
+					} 
+				}
+				h = numOfMisplacedTiles;
+
 		        break;
 		         
-		case manhattanDistance:
+		case 1:
 		        //place your implementation here
-		        
+		        for(int i=0; i < 3; i++){
+					for(int j=0; j < 3; j++){	
+						if(board[i][j] == 0) continue;
+						for(int n=0; n < 3; n++){
+							for(int m=0; m < 3; m++){	
+								if( board[i][j] == goalBoard[n][m]){
+									//this should be |x1 - x2| + |y1 - y2|
+									sum += abs(i-n) + abs(j-m);
+								}
+							}
+						}
+
+					} 
+				}
 		        h = sum; 					
 		        break;         
 		           
@@ -176,40 +211,40 @@ bool Puzzle::canMoveDown(){
 
 ///////////////////////////////////////////////
 //these functions will be useful for Progressive Deepening Search 
-
-bool Puzzle::canMoveLeft(int maxDepth){
-  	
-  	bool m=false;
-  	//put your implementations here
-  	return m; 
-}
-bool Puzzle::canMoveRight(int maxDepth){
+// 
+// bool Puzzle::canMoveLeft(int maxDepth){
+//  
+// 	 bool m=false;
+//   	//put your implementations here
+//   	return m; 
+// }
+// bool Puzzle::canMoveRight(int maxDepth){
    
-  	bool m=false;
-  	//put your implementations here
-  	return m; 
-}
-
-
-bool Puzzle::canMoveUp(int maxDepth){
-   
-  	bool m=false;
-  	//put your implementations here
-  	return m; 
-}
-
-bool Puzzle::canMoveDown(int maxDepth){
-   
-  	bool m=false;
-  	//put your implementations here
-  	return m; 
-}
-
+//   	bool m=false;
+//   	//put your implementations here
+//   	return m; 
+// }
+// 
+// 
+// bool Puzzle::canMoveUp(int maxDepth){
+//    
+//   	bool m=false;
+//   	//put your implementations here
+//   	return m; 
+// }
+// 
+// bool Puzzle::canMoveDown(int maxDepth){
+//    
+//   	bool m=false;
+//   	//put your implementations here
+//   	return m; 
+// }
+// 
 ///////////////////////////////////////////////
 
 Puzzle *Puzzle::moveLeft(){
 	
-	Puzzle *p = new Puzzle(*this);
+	Puzzle* p = new Puzzle(*this);
 	
 	
    if(x0 > 0){

@@ -12,6 +12,7 @@
 #include "PDFS.h"
 #include "PDFNS.h"
 #include "puzzle.h"
+#include "bestFirstVis.cpp"
 
 //Function prototypes
 string progressiveDeepeningSearch_VisitedList(string const initialState, string const goalState, int &numOfStateExpansions, int& maxQLength, float &actualRunningTime, int ultimateMaxDepth);

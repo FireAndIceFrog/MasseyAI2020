@@ -1,3 +1,5 @@
+#ifndef puzzle_h
+#define puzzle_h
 #include <string>
 #include <iostream>
 
@@ -32,10 +34,10 @@ public:
     Puzzle(string const elements, string const goal);
      
     void printBoard();
-    
-    int h(heuristicFunction hFunction);   
+    friend bool  operator> (  const Puzzle&  lhs, const Puzzle& rhs);
+    int h(int hFunction);   
     void updateFCost(); 
-    void updateHCost(heuristicFunction hFunction);
+    void updateHCost(int hFunction);
     void updateDepth(){
 		 depth++;
 	}		 
@@ -74,7 +76,8 @@ public:
     
     int getPathLength();
     int getFCost();
-	int getHCost();
+	int getHCost() const;
 	int getGCost();	
 	
 };
+#endif

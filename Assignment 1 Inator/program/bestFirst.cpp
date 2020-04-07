@@ -174,14 +174,24 @@ class BF: public state {
         //ofstream output;
         //output.open("output.txt", std::ios_base::app);
         //output<<"Reading node with state: "<<curr.path<<"\n";
+        string nl = "\n";
+        // cout<<"state: "<<curr.path<<nl;
         while (!children.empty()){
             //push the children into the list; Convert the order from DOWN->RIGHT->UP->LEFT->(HEAD) to LEFT->UP->RIGHT->DOWN->(HEAD)
             //insert according to heuristic value; if children is bigger or equal, insert to the left (meaning that the left side of tree is read first)
             vector<stateNode>::iterator it = states->end();
             //parse the array and find the position to insert at.
-            
+            // cout<<"Curr Cost: "<<children.back().cost<<nl;
             //insert at position IT, decrement the size
-            while ((*it).cost < children.back().cost && it != states->end()) --it;
+            while ((*it).cost < children.back().cost && it != states->end()){ 
+                
+                cout<<"IT COST < CHILDREN: "<<(*it).cost<<" < "<<children.back().cost << (*it).cost << children.back().cost<<"\n";
+                
+                
+                
+                --it;
+            }
+            cout<<"CHildren path: "<<children.back().path<<"\n";
             states->insert(it,children.back());
             children.pop_back();
         }
