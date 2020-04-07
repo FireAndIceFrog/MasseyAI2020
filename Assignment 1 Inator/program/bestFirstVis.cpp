@@ -18,7 +18,19 @@ using namespace std;
 
 class BFV {
     private:
-    priority_queue<Puzzle, std::vector<Puzzle>, std::greater<Puzzle> > stateQueue;
+    class node : public Puzzle{
+        public:
+        node(const node &p):Puzzle(p){}; //Constructor
+        node(string const elements, string const goal):Puzzle(elements,goal){};
+        bool operator> ( const node& rhs) const{
+	        return this->getHCost() > rhs.getHCost();
+        }
+
+    };
+
+
+
+    priority_queue<node, std::vector<node>, std::greater<node> > stateQueue;
     unordered_set<std::string> visited;
     size_t maxQLen;
     string path;
@@ -41,7 +53,7 @@ class BFV {
         return maxQLen;
     }
     void search(){
-        Puzzle curr = Puzzle(init, goal);
+        node curr = node(init, goal);
         int heuristic = manhattanDistance;
         string nl = "\n";
         //1.Initialize Q with search node (s) as only entry
@@ -56,44 +68,44 @@ class BFV {
             ++stateExpansions;
             //4.Find all the decendants of the state N (not visited) + create all one step extensions of N
             if(curr.canMoveDown()) {
-                Puzzle* child = curr.moveDown();
+                node* child = (node*)curr.moveDown();
                 child->updateHCost(heuristic);
                 //moving to stack This is mostly constant time.
                 if(visited.count(child->toString()) == 0) { 
-                    stateQueue.push(Puzzle(*child));
+                    stateQueue.push(node(*child));
                     visited.insert(child->toString());
                 }
                 delete child;
 
             } 
             if(curr.canMoveRight()) {
-                Puzzle* child = curr.moveRight();
+                node* child = (node*)curr.moveRight();
                 child->updateHCost(heuristic);
                 //moving to stack This is mostly constant time.
                 if(visited.count(child->toString()) == 0) { 
-                    stateQueue.push(Puzzle(*child));
+                    stateQueue.push(node(*child));
                     visited.insert(child->toString());
                 }
                 delete child;
 
             } 
             if(curr.canMoveUp()) {
-                Puzzle* child = curr.moveUp();
+                node* child = (node*)curr.moveUp();
                 child->updateHCost(heuristic);
                 //moving to stack This is mostly constant time.
                 if(visited.count(child->toString()) == 0) { 
-                    stateQueue.push(Puzzle(*child));
+                    stateQueue.push(node(*child));
                     visited.insert(child->toString());
                 }
                 delete child;
 
             }
             if(curr.canMoveLeft()) {
-                Puzzle* child = curr.moveLeft();
+                node* child = (node*)curr.moveLeft();
                 child->updateHCost(heuristic);
                 //moving to stack This is mostly constant time.
                 if(visited.count(child->toString()) == 0) { 
-                    stateQueue.push(Puzzle(*child));
+                    stateQueue.push(node(*child));
                     visited.insert(child->toString());
                 }
                 delete child;

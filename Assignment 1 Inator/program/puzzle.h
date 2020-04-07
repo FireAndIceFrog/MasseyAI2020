@@ -34,7 +34,6 @@ public:
     Puzzle(string const elements, string const goal);
      
     void printBoard();
-    friend bool  operator> (  const Puzzle&  lhs, const Puzzle& rhs);
     int h(int hFunction);   
     void updateFCost(); 
     void updateHCost(int hFunction);

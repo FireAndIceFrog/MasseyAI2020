@@ -1,154 +1,201 @@
-#ifndef PDS_H
-#define PDS_H
-
+#ifndef pds_vis_NOstrtict_H
+#define pds_vis_NOstrtict_H
 #include <ctime>
 #include <string>
 #include <iostream>
 #include <algorithm>
 #include <cstdlib>
 #include <vector>
-
-#include "state.cpp"
 #include <thread>
-
+#include <functional>
+#include <thread>
+#include "puzzle.h"
 #include <fstream>
+#include <stack>
+#include <unordered_set>
 
 using namespace std;
 
-class PDS: public state {
-    protected:
+class PDSNSL {
+    private:
+    class node : public Puzzle{
+        public:
+        node(const node &p):Puzzle(p){}; //Constructor
+        node(string const elements, string const goal):Puzzle(elements,goal){};
+        bool operator> ( const node& rhs) const{
+	        return this->getHCost() > rhs.getHCost();
+        }
+
+    };
+    struct visitedNode { 
+    string state;
+    int depth; 
+  
+        visitedNode(string f, int l) { 
+            state = f; 
+            depth = l; 
+        } 
+    
+        bool operator==(const visitedNode& p) const   { 
+            return state == p.state; 
+        } 
+    }; 
+    
+    class HashFunction { 
+    public: 
+    
+        // We use predfined hash functions of strings 
+        // and define our hash function as XOR of the 
+        // hash values. 
+        size_t operator()(const visitedNode& p) const
+        { 
+            return (hash<string>()(p.state)); 
+        } 
+    }; 
+
+
+
+
+
+
+
+    stack<node> stateQueue;
+    unordered_set<visitedNode, HashFunction> visited;
+    size_t maxQLen;
+    string path;
+    string init;
+    string goal;
+    int stateExpansions;
     int maxDepth;
-
-    
-    
     public:
-    PDS& setMaxDepth(int maxDepth){this->maxDepth = maxDepth; return *this; }
-    int getMaxDepth() {return maxDepth; }
-    PDS():state(){ maxDepth = 0;  };
-    //set the init state, return this
-    //1.Initialize Q with search node (s) as only entry (already implemented)
-
-    //2.If Q is empty, fail. Otherwise pick a node from Q
-    //this is to be overridden by a child class - return the index to be removed, the step function will handle the removal of the item
-    int selectItem(int depth, int cost){
-        int size = states->size();
-        //because we are working with a vector -> return the max value (for optimization!) 
-        //size of vector with 1 element = 1. index of that element is 0.
-        return size-1;
+    //set up the base variables.
+    PDSNSL(string start, string goal):maxQLen{0}, path{""},goal{goal}, init{start}, stateExpansions{0}, maxDepth{1}{
+        
         
     }
-    //3. IF state is goal, return it otherwise remove item from queue
-    //4.Find all the decendants of the state N (not visited) + create all one step extensions of N
-    virtual void getChild(int ZeroIndex, int direction, stateNode* curr, stateNode &state){
-        return;
+
+    string getPath(){
+        return path;
     }
-    vector<stateNode> getChildNodes(stateNode curr){
-        int pos = curr.path.find("0");
-        thread threadPool[4];
-        stateNode stateManager[4];
-        vector<stateNode> childStates =  vector<stateNode>();
-        //only expand if the maxDepth > current depth, else ignore this node.
-        
-        stateNode defaultState = stateNode();
-        defaultState.path = "";
-        for (int i = 0; i < 4; ++i){
-            //create a vector (used as a stack) -> DOWN->LEFT->UP->RIGHT 
-            stateManager[i] = defaultState;
-            threadPool[i] = thread(getChild,this,pos, i, &curr, ref(stateManager[i]));
-            threadPool[i].join();
-        }
-        for (int i = 0; i < 4; ++i){
-            //push into vector (as though it were a stack) DOWN(0)->RIGHT(1)->UP(2)->LEFT(3)
-            if(stateManager[i].path == defaultState.path) continue;
-            childStates.push_back(stateManager[i]); 
-            
-        }
-        
-        return childStates;
-
-            
+    int getStateExpansions(){
+        return stateExpansions;
     }
-    //5. Add extended paths to the Q; Add all children to visited
-    // The step function will handle selecting, removal and deletion from the list. 
-    
-    stateNode* step(bool* passed){
-        stateNode curr;
-        int index = selectItem(0,0);
-        //if states is empty -> return null
-        if(index < 0) throw "Ran out of expandable nodes";
-        
-        
-        //check for goal
-         if((*states)[index].path == goalState)  return &(*states)[index]; 
-        //otherwise remove from the list
-        curr = (*states)[index];
-        states->pop_back();
-        if(curr.depth < maxDepth){
-            ++enqueue;
-            //get all the children nodes, return false if outside depth range
-            vector<stateNode> children = getChildNodes(curr);
-            
-            int childrenSize = children.size()-1;
-            while (!children.empty()){
-                //push the children into the list; Convert the order from DOWN->RIGHT->UP->LEFT->(HEAD) to LEFT->UP->RIGHT->DOWN->(HEAD)
-                states->push_back((children)[childrenSize--]);
-                children.pop_back();
-            }
-
-        }
-        *passed = (states->size()!=0);
-        this->maxQueueSize = this->max(this->maxQueueSize, states->size());
-
-        return nullptr;
+    size_t getMaxQLen() {
+        return maxQLen;
     }
-
-
-    //6.Go to step 2
-    //this will handle any extre features that the list will control.
-    string start(string const initialState, string const goalState, 
-        int *numOfStateExpansions, int*maxQLength,  int *ultimateMaxDepth){
-        string moves;
-        maxDepth = 1;
+    void search(){
+        node curr = node(init, goal);
+        visitedNode vis = visitedNode(init, 0);
+        int heuristic = manhattanDistance;
+        string nl = "\n";
+        //1.Initialize Q with search node (s) as only entry
+        stateQueue.push(curr);
+        visited.insert(vis);
         int step = 1;
-        int currentDepth = 0;
-        bool passed = true;
-        this->setInitState(initialState).setGoalState(goalState);
-        stateNode* finalState = nullptr;
+        
+        for(;; maxDepth += step){
+            while(!stateQueue.empty()){
+            
+                //2.If Q is empty, fail. Otherwise pick a node from Q
+                curr = stateQueue.top();
+                stateQueue.pop();
+                //3. IF state is goal, return it otherwise remove item from queue
+                if (curr.toString() == goal) { path = curr.getPath(); return; }
+                if (curr.getDepth()+1 >= maxDepth) continue;
+                ++stateExpansions;
+                //4.Find all the decendants of the state N (not visited) + create all one step extensions of N
+                if(curr.canMoveLeft()) {
+                    node* child = (node*)curr.moveLeft();
+                    child->setDepth(curr.getDepth()+1);
+                    //moving to stack This is mostly constant time.
+                    vis = visitedNode(child->toString(), child->getDepth());
+                    if(visited.count(vis) == 0 && child->getDepth() < maxDepth ) { 
+                        stateQueue.push(node(*child));
+                        visited.insert(vis);
+                    } else if ((*(visited.find(vis))).depth > vis.depth  && child->getDepth() < maxDepth){
+                        visited.erase(visited.find(vis));
+                        visited.insert(vis);
+                        stateQueue.push(node(*child));
+                    } 
+                    delete child;
+                }
+                if(curr.canMoveUp()) {
+                    node* child = (node*)curr.moveUp();
+                    child->setDepth(curr.getDepth()+1);
+                    //moving to stack This is mostly constant time.
+                    vis = visitedNode(child->toString(), child->getDepth());
+                    if(visited.count(vis) == 0 && child->getDepth() < maxDepth) { 
+                        stateQueue.push(node(*child));
+                        visited.insert(vis);
+                    }else if ((visited.find(vis))->depth > vis.depth  && child->getDepth() < maxDepth){
+                        visited.erase(visited.find(vis));
+                        visited.insert(vis);
+                        stateQueue.push(node(*child));
+                    }
+                    delete child;
 
-        while (finalState == nullptr){
-            if(!passed){
-                maxDepth += step;
-                this->setInitState(initialState);
-                passed = true;
+                }
+                if(curr.canMoveRight()) {
+                    node* child = (node*)curr.moveRight();
+                    child->setDepth(curr.getDepth()+1);
+                    //moving to stack This is mostly constant time.
+                    vis = visitedNode(child->toString(), child->getDepth());
+                    if(visited.count(vis) == 0 && child->getDepth() < maxDepth) { 
+                        stateQueue.push(node(*child));
+                        visited.insert(vis);
+                    }else if ((*(visited.find(vis))).depth > vis.depth  && child->getDepth() < maxDepth){
+                        visited.erase(visited.find(vis));
+                        visited.insert(vis);
+                        stateQueue.push(node(*child));
+                    }
+                    delete child;
+
+                } 
+                if(curr.canMoveDown()) {
+                    node* child = (node*)curr.moveDown();
+                    child->setDepth(curr.getDepth()+1);
+                    //moving to stack This is mostly constant time.
+                    vis = visitedNode(child->toString(), child->getDepth());
+                    if(child->getDepth() < maxDepth){
+                        if(visited.count(vis) == 0 ) { 
+                            stateQueue.push(node(*child));
+                            visited.insert(vis);
+                        }else if ((*(visited.find(vis))).depth > vis.depth ){
+                            visited.erase(visited.find(vis));
+                            visited.insert(vis);
+                            stateQueue.push(node(*child));
+                        }
+                    }
+                    delete child;
+
+                } 
                 
+                
+                
+                // cout<<"Q Len: "<<stateQueue.size()<<"\n";
+                //5. Add extended paths to the Q; Add all children to visited
+                maxQLen = std::max(maxQLen, stateQueue.size());
+                //6.Go to step 2
+            
             }
-            string str;
-            try {
-                finalState = this->step(&passed) ;
-            }
-            catch(const char* e)
-            {
-                std::cerr << e << '\n';
-                break;
-            }
+            //reset visited
+            visited.clear();
+            //reset states
+            stateQueue = stack<node>();
+            //set curr
+            curr = node(init, goal);
+            vis = visitedNode(init, 0);
+            stateQueue.push(curr);
+            visited.insert(vis);
             
         }
-        //set the returnables.
-        *numOfStateExpansions = this->enqueue;
-        *maxQLength = this->maxQueueSize;
-        *ultimateMaxDepth = finalState->depth;
-        moves = finalState->direction;
-        return moves;
+
     }
-    
-
-    
-
-    
 
 
 
-
+   
+   
 };
 #endif
 // int main() {
@@ -157,17 +204,16 @@ class PDS: public state {
 //     string const goalState = "087654321"; 
 //     int numOfStateExpansions = 0;
 //     int maxQLength = 0;
-//     int ultimateMaxDepth = 0;
 //     string moves = "";
 
-//     PDFS item = PDFS();
-//     moves = item.start(initialState, goalState, &numOfStateExpansions,&maxQLength,  &ultimateMaxDepth );
+//     BFV item = BFV(initialState, goalState);
+//     item.search();
+//     moves = item.getPath();
 //     cout<<"------------------------\n";
 //     cout<<"Init: "<<initialState<<"\n";
 //     cout<<"Goal: "<<goalState<<"\n";
-//     cout<<"State expansions: "<<numOfStateExpansions<<"\n";
-//     cout<<"Q Length: "<<maxQLength<<"\n";
-//     cout<<"Ultimate Depth: "<<ultimateMaxDepth<<"\n";
+//     cout<<"State expansions: "<<item.getStateExpansions()<<"\n";
+//     cout<<"Q Length: "<<item.getMaxQLen()<<"\n";
 //     cout<<"Moves: "<<moves<<"\n";
 //     cout<<"------------------------\n";
 

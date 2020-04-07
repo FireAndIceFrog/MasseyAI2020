@@ -4,13 +4,6 @@
 
 using namespace std;
 
-////////////////////////////////////////
-//Operator Overloads
-////////////////////////////////////////
-bool operator> (  const Puzzle&  lhs, const Puzzle& rhs){
-	// cout<<"LHS: "<<lhs.getHCost()<<" > "<<"RHS: "<<rhs.getHCost()<<"\n";
-	return lhs.getHCost() > rhs.getHCost();
-}
 
 
 //////////////////////////////////////////////////////////////

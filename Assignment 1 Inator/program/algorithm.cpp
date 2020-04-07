@@ -1,10 +1,9 @@
 
 
 #include "algorithm.h"
-#include "state.cpp"
-#include "PDFNS.h"
-#include "PDFS.h"
 #include "bestFirstVis.cpp"
+#include "PDS.cpp"
+#include "PDNS.cpp"
 
 
 
@@ -108,15 +107,19 @@ string progressiveDeepeningSearch_VisitedList(string const initialState, string 
     string path;
 	clock_t startTime;
     //add necessary variables here
-
+	cout<<"Working with PDSSL\n";
 
     //algorithm implementation
 	// cout << "------------------------------" << endl;
  //    cout << "<<progressiveDeepeningSearch_VisitedList>>" << endl;
  //    cout << "------------------------------" << endl;
-	PDFS* item = new PDFS();
 	startTime = clock();
-    path = item->start(initialState, goalState, &numOfStateExpansions,&maxQLength,  &ultimateMaxDepth );
+	PDSSL* item = new PDSSL(initialState, goalState);
+	startTime = clock();
+	item->search();
+    path = item->getPath();
+	numOfStateExpansions = item->getStateExpansions();
+	maxQLength = item->getMaxQLen();
 	
 	// srand(time(NULL)); //RANDOM NUMBER GENERATOR - ONLY FOR THIS DEMO.  YOU REALLY DON'T NEED THIS! DISABLE THIS STATEMENT.
 	// maxQLength= rand() % 500; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY.
@@ -151,9 +154,13 @@ string progressiveDeepeningSearch_NonStrict_VisitedList(string const initialStat
  //    cout << "<<progressiveDeepeningSearch_NonStrict_VisitedList>>" << endl;
  //    cout << "------------------------------" << endl;
 
-	PDFNS* item =new PDFNS();
 	startTime = clock();
-    path = item->start(initialState, goalState, &numOfStateExpansions,&maxQLength,  &ultimateMaxDepth );
+	PDSNSL* item = new PDSNSL(initialState, goalState);
+	startTime = clock();
+	item->search();
+    path = item->getPath();
+	numOfStateExpansions = item->getStateExpansions();
+	maxQLength = item->getMaxQLen();
 	// srand(time(NULL)); //RANDOM NUMBER GENERATOR - ONLY FOR THIS DEMO.  YOU REALLY DON'T NEED THIS! DISABLE THIS STATEMENT.
 	// maxQLength= rand() % 500; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY.
 	// numOfStateExpansions = rand() % 600; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY

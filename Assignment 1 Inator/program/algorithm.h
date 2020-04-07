@@ -7,10 +7,6 @@
 #include <iostream>
 #include <algorithm>
 #include <cstdlib>
-
-#include "state.cpp"
-#include "PDFS.h"
-#include "PDFNS.h"
 #include "puzzle.h"
 #include "bestFirstVis.cpp"
 
