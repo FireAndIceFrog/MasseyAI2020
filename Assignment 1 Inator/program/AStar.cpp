@@ -46,12 +46,14 @@ private:
     //Queue
     priority_queue<node, std::vector<node>, std::greater<node> > stateQueue;
     unordered_set<string> expanded;
+    
     //Details for Output
     size_t maxQLen;
     string path;
     string init;
     string goal;
     int stateExpansions;
+    int heuristic;
 
 public:
 
@@ -73,22 +75,64 @@ public:
     void search(){
         // (1) Initialise Q with search node (S) as only entry; set Expanded = ()
 
-        // (2) If Q is empty, fail.  Else, pick some search node N from Q.
+        node curr = node(init, goal);
+        stateQueue.push(curr);
+        expanded.insert(init);
 
+        while(!stateQueue.empty()){
+
+        // (2) If Q is empty, fail.  Else, pick some search node N from Q.
+            curr = stateQueue.top();
+            
         // (3) Check if N is goal State. 
-        //              If it is, return N
-        //              If not, Take N from Q and Expand
+        //     If it is, return N
+            if (curr.toString() == goal) { path = curr.getPath(); return; }
+            ++stateExpansions;
+        //     If not, Take N from Q and Expand
+            stateQueue.pop();
 
         // (4) If State N is already in Expanded List, Discard and move to step 2
-
+            //If Current State exists in Expanded, will return greater than 0
+            if(expanded.count(curr.getPath()) != 0){
+                //State already exists, Skip back to Step 2
+                continue;
+            }
         // (5) Find all children of N (Not in expanded) and create them
+            if(curr.canMoveDown()) {
+                node* child = (node*)curr.moveDown();
+                pushChild(child);
+            } 
+            if(curr.canMoveRight()) {
+                node* child = (node*)curr.moveRight();
+                pushChild(child);
+            } 
+            if(curr.canMoveUp()) {
+                node* child = (node*)curr.moveUp();
+                pushChild(child);
 
+            }
+            if(curr.canMoveLeft()) {
+                node* child = (node*)curr.moveLeft();
+                pushChild(child);
+            }
         // (6) Add all the extended paths, if Child already in Q, keep Smaller F Cost
 
         // (7) Go to 2
 
+        }
 
+    }
 
+    void pushChild(node* child){
+        child->updateCost(heuristic);
+        
+        //Check if the Child Node's State already exists in the Queue
+        
+        if(expanded.count(child->toString()) == 0) { 
+            stateQueue.push(node(*child));
+            expanded.insert(child->toString());
+        }
+        delete child;
     }
 
 
