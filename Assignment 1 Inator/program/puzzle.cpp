@@ -22,8 +22,7 @@ Puzzle::Puzzle(const Puzzle &p) : path(p.path){
 	y0 = p.y0;
 	//path = p.path;
 	pathLength = p.pathLength;
-	hCost = p.hCost;
-	fCost = p.fCost;	
+	cost = p.cost;
 	strBoard = toString(); //uses the board contents to generate the string equivalent
 	depth = p.depth;
 	
@@ -60,8 +59,7 @@ Puzzle::Puzzle(string const elements, string const goal){
 	///////////////////////	
 	path = "";
 	pathLength=0;
-	hCost = 0;
-	fCost = 0;
+	cost = 0;
 	depth = 0;
 	strBoard = toString();	
 }
@@ -75,26 +73,14 @@ int Puzzle::getDepth(){
 	return depth;
 }
 
-void Puzzle::updateHCost(int hFunction){
+void Puzzle::updateCost(int hFunction){
 	
-	hCost = h(hFunction);
+	cost = h(hFunction);
 }
 
 
-void Puzzle::updateFCost(){
-	//fCost = ?
-}
-
-int Puzzle::getFCost(){
-	return fCost;
-}
-
-int Puzzle::getHCost() const{
-	return hCost;
-}
-
-int Puzzle::getGCost(){
-	return pathLength;
+int Puzzle::getCost() const{
+	return cost;
 }
 
 

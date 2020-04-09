@@ -15,15 +15,18 @@ private:
 
     string path;
     int pathLength;
-    int hCost;
-    int fCost;
-    int depth; 
+    
         
     int goalBoard[3][3];
     
     int x0, y0; //coordinates of the blank or 0-tile
     
     int board[3][3];
+
+protected:
+
+    int cost;
+    int depth; 
     
 public:
     
@@ -35,8 +38,8 @@ public:
      
     void printBoard();
     int h(int hFunction);   
-    void updateFCost(); 
-    void updateHCost(int hFunction);
+    
+    void updateCost(int hFunction);
     void updateDepth(){
 		 depth++;
 	}		 
@@ -75,9 +78,8 @@ public:
     int getDepth();
     
     int getPathLength();
-    int getFCost();
-	int getHCost() const;
-	int getGCost();	
+    
+	int getCost() const;
 	
 };
 #endif
