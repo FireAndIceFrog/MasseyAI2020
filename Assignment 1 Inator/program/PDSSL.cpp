@@ -23,7 +23,7 @@ class PDSSL {
         node(const node &p):Puzzle(p){}; //Constructor
         node(string const elements, string const goal):Puzzle(elements,goal){};
         bool operator> ( const node& rhs) const{
-	        return this->getHCost() > rhs.getHCost();
+	        return this->getCost() > rhs.getCost();
         }
 
     };

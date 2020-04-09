@@ -23,7 +23,7 @@ class BFV {
         node(const node &p):Puzzle(p){}; //Constructor
         node(string const elements, string const goal):Puzzle(elements,goal){};
         bool operator> ( const node& rhs) const{
-	        return this->getHCost() > rhs.getHCost();
+	        return this->getCost() > rhs.getCost();
         }
 
     };
@@ -69,7 +69,7 @@ class BFV {
             //4.Find all the decendants of the state N (not visited) + create all one step extensions of N
             if(curr.canMoveDown()) {
                 node* child = (node*)curr.moveDown();
-                child->updateHCost(heuristic);
+                child->updateCost(heuristic);
                 //moving to stack This is mostly constant time.
                 if(visited.count(child->toString()) == 0) { 
                     stateQueue.push(node(*child));
@@ -80,7 +80,7 @@ class BFV {
             } 
             if(curr.canMoveRight()) {
                 node* child = (node*)curr.moveRight();
-                child->updateHCost(heuristic);
+                child->updateCost(heuristic);
                 //moving to stack This is mostly constant time.
                 if(visited.count(child->toString()) == 0) { 
                     stateQueue.push(node(*child));
@@ -91,7 +91,7 @@ class BFV {
             } 
             if(curr.canMoveUp()) {
                 node* child = (node*)curr.moveUp();
-                child->updateHCost(heuristic);
+                child->updateCost(heuristic);
                 //moving to stack This is mostly constant time.
                 if(visited.count(child->toString()) == 0) { 
                     stateQueue.push(node(*child));
@@ -102,7 +102,7 @@ class BFV {
             }
             if(curr.canMoveLeft()) {
                 node* child = (node*)curr.moveLeft();
-                child->updateHCost(heuristic);
+                child->updateCost(heuristic);
                 //moving to stack This is mostly constant time.
                 if(visited.count(child->toString()) == 0) { 
                     stateQueue.push(node(*child));
