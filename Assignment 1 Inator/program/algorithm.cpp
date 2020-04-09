@@ -4,6 +4,7 @@
 #include "bestFirstVis.cpp"
 #include "PDS.cpp"
 #include "PDNS.cpp"
+#include "bestFirstNoVis.cpp"
 
 
 
@@ -29,7 +30,7 @@ string bestFirstSearch_No_VisitedList(string const initialState, string const go
  //    cout << "------------------------------" << endl;
 
 	startTime = clock();
-	BFV* item = new BFV(initialState, goalState);
+	BFNV* item = new BFNV(initialState, goalState);
 	startTime = clock();
 	item->search();
     path = item->getPath();
@@ -107,7 +108,6 @@ string progressiveDeepeningSearch_VisitedList(string const initialState, string 
     string path;
 	clock_t startTime;
     //add necessary variables here
-	cout<<"Working with PDSSL\n";
 
     //algorithm implementation
 	// cout << "------------------------------" << endl;

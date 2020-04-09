@@ -1,5 +1,5 @@
-#ifndef best_first_NoVis_H
-#define best_first_NoVis_H
+#ifndef best_first_Vis_H
+#define best_first_Vis_H
 #include <ctime>
 #include <string>
 #include <iostream>
