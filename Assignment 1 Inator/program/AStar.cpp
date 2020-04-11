@@ -13,8 +13,40 @@
 #include <fstream>
 #include <queue>
 #include <unordered_set>
+#include <set>
 
 using namespace std;
+
+//Used to access the Priority queue 
+// template <class T, class S, class C>
+// S& Container(priority_queue<T, S, C>& q) {
+//     struct HackedQueue : private priority_queue<T, S, C> {
+//         static S& Container(priority_queue<T, S, C>& q) {
+//             return q.*&HackedQueue::c;
+//         }
+//     };
+//     return HackedQueue::Container(q);
+// }
+
+// template<typename T>
+// class custom_priority_queue : public std::priority_queue<T, std::vector<T>>
+// {
+//   public:
+    
+    
+
+//       bool remove(const T& value) {
+//         auto it = std::find(this->c.begin(), this->c.end(), value);
+//         if (it != this->c.end()) {
+//             this->c.erase(it);
+//             std::make_heap(this->c.begin(), this->c.end(), this->comp);
+//             return true;
+//        }
+//        else {
+//         return false;
+//        }
+//  }
+// };
 
 class AStar {
 
@@ -37,14 +69,17 @@ private:
             cost = h(hFunction) + depth;
         }
 
-        //Greater than Operator Overload for the Priority Queue
-        bool operator> ( const node& rhs) const{
-	        return this->getCost() > rhs.getCost();
+        //Less than Operator Overload for the Priority Queue
+        bool operator< ( const node& rhs) const{
+	        return this->getCost() < rhs.getCost();
         }
     };
 
     //Queue
-    priority_queue<node, std::vector<node>, std::greater<node> > stateQueue;
+    //priority_queue<node, std::vector<node>, std::greater<node> > stateQueue;
+    set<node> stateQueue;
+    set<node>::iterator qIt;
+    //vector<node> &iterableQueue = Container(stateQueue);
     unordered_set<string> expanded;
     
     //Details for Output
@@ -76,20 +111,21 @@ public:
         // (1) Initialise Q with search node (S) as only entry; set Expanded = ()
 
         node curr = node(init, goal);
-        stateQueue.push(curr);
-        expanded.insert(init);
+        stateQueue.insert(curr);
 
         while(!stateQueue.empty()){
 
         // (2) If Q is empty, fail.  Else, pick some search node N from Q.
-            curr = stateQueue.top();
+            qIt = stateQueue.begin();
+            curr = node((*qIt));
+
             
         // (3) Check if N is goal State. 
         //     If it is, return N
-            if (curr.toString() == goal) { path = curr.getPath(); return; }
+            if (curr.strBoard == goal) { path = curr.getPath(); return; }
             ++stateExpansions;
         //     If not, Take N from Q and Expand
-            stateQueue.pop();
+            stateQueue.erase(qIt);
 
         // (4) If State N is already in Expanded List, Discard and move to step 2
             //If Current State exists in Expanded, will return greater than 0
@@ -97,7 +133,11 @@ public:
                 //State already exists, Skip back to Step 2
                 continue;
             }
+            //Now add to expanded list
+            expanded.insert(curr.strBoard);
+
         // (5) Find all children of N (Not in expanded) and create them
+        // (6) Add all the extended paths, if Child already in Q, keep Smaller F Cost
             if(curr.canMoveDown()) {
                 node* child = (node*)curr.moveDown();
                 pushChild(child);
@@ -115,23 +155,42 @@ public:
                 node* child = (node*)curr.moveLeft();
                 pushChild(child);
             }
-        // (6) Add all the extended paths, if Child already in Q, keep Smaller F Cost
+        
 
         // (7) Go to 2
 
         }
 
     }
-
+    //Insert a Child into the queue correctly and update the expanded list
     void pushChild(node* child){
+
+        bool exists = false;
         child->updateCost(heuristic);
         
         //Check if the Child Node's State already exists in the Queue
-        
-        if(expanded.count(child->toString()) == 0) { 
-            stateQueue.push(node(*child));
-            expanded.insert(child->toString());
+        for(qIt = stateQueue.begin(); qIt != stateQueue.end(); ){
+            // If the states are the same and If the child being examined is cheaper than the node in the queue
+            if( (*qIt).strBoard == child->strBoard && (*qIt).getCost() > child->getCost()){
+                //State already exists, so theoretically this should be the only insertion (1 for 1 swap, only one state can exist at one time)
+                exists = true;
+                //erase returns an iterator to the next position in the set
+                qIt = stateQueue.erase(qIt);
+                //COME BACK HERE TO TEST FOR EFFICIENCY
+                //Might be a problem if next in the queue has same fCost
+                stateQueue.insert(qIt, node(*child));
+                   
+            } else {
+                qIt++;
+            }
         }
+        //State is a new state
+        if(!exists){
+            //Add to queue
+            stateQueue.insert(node(*child));
+        }
+
+        
         delete child;
     }
 

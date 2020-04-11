@@ -2,6 +2,8 @@
     "files.associations": {
         "regex": "cpp",
         "vector": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "xhash": "cpp",
+        "unordered_set": "cpp"
     }
 }
