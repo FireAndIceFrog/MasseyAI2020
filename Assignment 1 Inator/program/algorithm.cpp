@@ -4,6 +4,10 @@
 #include "bestFirstVis.cpp"
 #include "PDSSL.cpp"
 #include "PDSNSL.cpp"
+#include "AStar.cpp"
+
+
+
 
 
 
@@ -188,27 +192,23 @@ string aStar_ExpandedList(string const initialState, string const goalState, int
 											 
    string path;
    clock_t startTime;
+
+   AStar* item = new AStar(initialState, goalState, heuristic);
+
    
-   numOfDeletionsFromMiddleOfHeap=0;
-   numOfLocalLoopsAvoided=0;
-   numOfAttemptedNodeReExpansions=0;
-
-
     // cout << "------------------------------" << endl;
     // cout << "<<aStar_ExpandedList>>" << endl;
     // cout << "------------------------------" << endl;
 	actualRunningTime=0.0;	
 	startTime = clock();
-	srand(time(NULL)); //RANDOM NUMBER GENERATOR - ONLY FOR THIS DEMO.  YOU REALLY DON'T NEED THIS! DISABLE THIS STATEMENT.
-	maxQLength= rand() % 200; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY.
-	numOfStateExpansions = rand() % 200; //AT THE MOMENT, THIS IS JUST GENERATING SOME DUMMY VALUE.  YOUR ALGORITHM IMPLEMENTATION SHOULD COMPUTE THIS PROPERLY
-
-
-	
+	item->search();
+	path = item->getPath();
+	numOfStateExpansions = item->getStateExpansions();
+	maxQLength = item->getMaxQLen();
 	
 //***********************************************************************************************************
 	actualRunningTime = ((float)(clock() - startTime)/CLOCKS_PER_SEC);
-	path = "DDRRLLLUUURDLUDURDLUU"; //this is just a dummy path for testing the function
+	
 	             
 	return path;		
 		
