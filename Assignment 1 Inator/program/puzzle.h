@@ -43,11 +43,12 @@ public:
 	 	  
 	 
     bool goalMatch();
-	 string toString();
+	
+    string toString();
 	
     string getString(){
 		return strBoard;
-	 }
+	}
     
     bool canMoveLeft();
     bool canMoveRight();
@@ -56,10 +57,10 @@ public:
 
 //----------------------------------------
 //these functions will be useful for Progressive Deepening Search    
-	 bool canMoveLeft(int maxDepth);
-	 bool canMoveDown(int maxDepth);
-	 bool canMoveRight(int maxDepth);
-	 bool canMoveUp(int maxDepth);	 
+	bool canMoveLeft(int maxDepth);
+    bool canMoveDown(int maxDepth);
+ 	bool canMoveRight(int maxDepth);
+	bool canMoveUp(int maxDepth);	 
 //----------------------------------------
 	  
     Puzzle * moveUp();

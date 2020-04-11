@@ -107,7 +107,7 @@ int Puzzle::h(int hFunction){
 	int numOfMisplacedTiles=0;
 	
 	switch(hFunction){
-		case 0:			      
+		case 0:			      //Heuristic Value, by Misplaced Tiles
 				//place your implementation here	
                 h = numOfMisplacedTiles;
 				for(int i=0; i < 3; i++){
@@ -121,7 +121,7 @@ int Puzzle::h(int hFunction){
 
 		        break;
 		         
-		case 1:
+		case 1:					//Heuristic Value, by Manhattan Distance
 		        //place your implementation here
 		        for(int i=0; i < 3; i++){
 					for(int j=0; j < 3; j++){	
@@ -240,7 +240,7 @@ Puzzle *Puzzle::moveLeft(){
 	Puzzle* p = new Puzzle(*this);
 	
 	
-   if(x0 > 0){
+   	if(x0 > 0){
 		
 		p->board[y0][x0] = p->board[y0][x0-1];
 		p->board[y0][x0-1] = 0;

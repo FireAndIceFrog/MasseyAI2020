@@ -28,8 +28,8 @@ class PDSNSL {
 
     };
     struct visitedNode { 
-    string state;
-    int depth; 
+        string state;
+        int depth; 
   
         visitedNode(string f, int l) { 
             state = f; 

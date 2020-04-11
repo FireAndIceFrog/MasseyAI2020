@@ -38,6 +38,21 @@ class PDSSL {
     string goal;
     int stateExpansions;
     int maxDepth;
+
+
+    //Hasnt been implemented, just a suggestion for reduction of code repetition
+    void pushChild(node* child, node* curr){
+        child->setDepth(curr->getDepth()+1);
+        //moving to stack This is mostly constant time.
+        if(visited.count(child->toString()) == 0 && child->getDepth() < maxDepth) { 
+            stateQueue.push(node(*child));
+            visited.insert(child->toString());
+        }
+        delete child;
+    }
+
+    
+
     public:
     //set up the base variables.
     PDSSL(string start, string goal):maxQLen{0}, path{""},goal{goal}, init{start}, stateExpansions{0}, maxDepth{1}{
