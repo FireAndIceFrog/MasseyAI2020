@@ -1,5 +1,5 @@
-#ifndef aStar_ExpandedList
-#define aStar_ExpandedList
+#ifndef aStar_expandL
+#define aStar_expandL
 #include <ctime>
 #include <string>
 #include <iostream>
@@ -17,36 +17,6 @@
 
 using namespace std;
 
-//Used to access the Priority queue 
-// template <class T, class S, class C>
-// S& Container(priority_queue<T, S, C>& q) {
-//     struct HackedQueue : private priority_queue<T, S, C> {
-//         static S& Container(priority_queue<T, S, C>& q) {
-//             return q.*&HackedQueue::c;
-//         }
-//     };
-//     return HackedQueue::Container(q);
-// }
-
-// template<typename T>
-// class custom_priority_queue : public std::priority_queue<T, std::vector<T>>
-// {
-//   public:
-    
-    
-
-//       bool remove(const T& value) {
-//         auto it = std::find(this->c.begin(), this->c.end(), value);
-//         if (it != this->c.end()) {
-//             this->c.erase(it);
-//             std::make_heap(this->c.begin(), this->c.end(), this->comp);
-//             return true;
-//        }
-//        else {
-//         return false;
-//        }
-//  }
-// };
 
 class AStar {
 
@@ -70,8 +40,8 @@ private:
         }
 
         //Less than Operator Overload for the Priority Queue
-        bool operator< ( const node& rhs) const{
-	        return this->getCost() < rhs.getCost();
+        bool operator> ( const node& rhs) const{
+	        return this->getCost() > rhs.getCost();
         }
     };
 
@@ -93,7 +63,7 @@ private:
 public:
 
     //Constructor for AStar Class
-    AStar(string start, string goal):maxQLen{0}, path{""},goal{goal}, init{start}, stateExpansions{0}{}
+    AStar(string start, string goal, int heuristic):maxQLen{0}, path{""},goal{goal}, init{start}, stateExpansions{0}, heuristic{heuristic}{}
     //Get AStar Path
     string getPath(){
         return path;
@@ -112,17 +82,32 @@ public:
 
         node curr = node(init, goal);
         stateQueue.insert(curr);
+        int sQSize = 0;
 
         while(!stateQueue.empty()){
+
+            curr.printBoard();
+            
+            if(sQSize > 50 ){
+                return;
+            } else {
+                sQSize++;
+            }
+
 
         // (2) If Q is empty, fail.  Else, pick some search node N from Q.
             qIt = stateQueue.begin();
             curr = node((*qIt));
+            
 
             
         // (3) Check if N is goal State. 
         //     If it is, return N
-            if (curr.strBoard == goal) { path = curr.getPath(); return; }
+            if (curr.strBoard == goal) { 
+                path = curr.getPath(); 
+                cout << "\n\nFound Path!!\n\n";
+                return; 
+            }
             ++stateExpansions;
         //     If not, Take N from Q and Expand
             stateQueue.erase(qIt);
@@ -131,6 +116,7 @@ public:
             //If Current State exists in Expanded, will return greater than 0
             if(expanded.count(curr.getPath()) != 0){
                 //State already exists, Skip back to Step 2
+                cout<<"\nAlready exists, discard node\n";
                 continue;
             }
             //Now add to expanded list
@@ -178,7 +164,8 @@ public:
                 qIt = stateQueue.erase(qIt);
                 //COME BACK HERE TO TEST FOR EFFICIENCY
                 //Might be a problem if next in the queue has same fCost
-                stateQueue.insert(qIt, node(*child));
+                cout<<"\nSwapped from Queue, foudn the same";
+                stateQueue.insert(node(*child));
                    
             } else {
                 qIt++;
