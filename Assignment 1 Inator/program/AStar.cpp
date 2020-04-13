@@ -31,8 +31,12 @@ private:
     public:
         //Constructor: Takes a constant referance to a node and copies
         node(const node &p):Puzzle(p){
-            local_list = p.local_list;
+            this->local_list = p.local_list;
         }; 
+
+        node(const node *p):Puzzle(*p){
+            this->local_list = unordered_set<string>();
+        }
         //Constructor: Constructs from Initial given state
         node(string const& elements, string const& goal):Puzzle(elements,goal){
 
@@ -40,7 +44,11 @@ private:
         };
 
         void addToLocal(const string& state){
-            local_list.insert(state);
+             local_list.insert(state);
+        }
+
+        unordered_set<string> getLocal(){
+            return local_list;
         }
         
         bool existsInLocal(const string& state){
@@ -148,8 +156,8 @@ public:
         // (6) Add all the extended paths, if Child already in Q, keep Smaller F Cost
             if(curr.canMoveDown()) {
                 cout <<"Successfull down" << endl;
-                node* child = (node*)curr.moveDown();
-                if(!curr.existsInLocal(child->strBoard)){
+                node child = node(curr.moveDown());
+                if(!curr.existsInLocal(child.h)){
                     pushChild(child);
                     
                 }
