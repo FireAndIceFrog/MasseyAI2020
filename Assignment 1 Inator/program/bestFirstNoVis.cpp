@@ -22,14 +22,19 @@ class BFNV {
         public:
         node(const node &p):Puzzle(p){
             this->visited = p.visited;
-        }; //Constructor
+        }; 
+        //Constructor
         node(const Puzzle *p):Puzzle(*p){
             this->visited = unordered_set<std::string>();
             delete p;
         };
+
         node& setVisited(unordered_set<std::string> vis){ this->visited = vis; return *this;}
+
         node(string const elements, string const goal):Puzzle(elements,goal){};
+
         unordered_set<std::string> visited;
+
         bool operator> ( const node& rhs) const{
 	        return this->getCost() > rhs.getCost();
         }
