@@ -31,28 +31,25 @@ private:
     public:
         //Constructor: Takes a constant referance to a node and copies
         node(const node &p):Puzzle(p){
-            unordered_set<string> local_list (p.local_list);
+            local_list = p.local_list;
         }; 
         //Constructor: Constructs from Initial given state
-        node(string const elements, string const goal):Puzzle(elements,goal){
-            unordered_set<string> local_list;
+        node(string const& elements, string const& goal):Puzzle(elements,goal){
+
             local_list.insert(strBoard);
         };
 
-        void addToLocal(string state){
+        void addToLocal(const string& state){
             local_list.insert(state);
         }
         
-        bool existsInLocal(string state){
-            if(local_list.count(state) > 0){
-                return true;
-            } else {
-                return false;
-            }
+        bool existsInLocal(const string& state){
+            cout << "Checking in local\n";
+            return local_list.count(state) > 0;
         }
 
         //Overriding the updateCost func
-        void updateCost(int hFunction){
+        void updateCost(int hFunction) override{
             //For A* Strict expanded List, Total cost is Path Length + Heuristic
             //For our example, Each path moves the Blank tile by One Space
             //Therefore, PathLength is equal to the Number of moves which is equal to depth
@@ -60,9 +57,9 @@ private:
             cost = h(hFunction) + depth;
         }
 
-        bool cmp(const node &a, const node &b){
-            return a.cost > b.cost;
-        }
+//        bool cmp(const node &a, const node &b){
+//            return a.cost > b.cost;
+//        }
 
         //Less than Operator Overload for the Priority Queue
         bool operator< ( const node& rhs) const{
@@ -71,8 +68,8 @@ private:
     };
 
     //Queue
-    vector<node> stateQueue();
-    make_heap();
+    vector<node> stateQueue;
+
     //vector<node> &iterableQueue = Container(stateQueue);
     unordered_set<string> expanded;
     
@@ -106,18 +103,22 @@ public:
 
         node curr = node(init, goal);
         cout<<"Node is made"<< endl;
-        stateQueue.insert(curr);
+        stateQueue.push_back(curr);
+        make_heap(stateQueue.begin(), stateQueue.end());
+
         int sQSize = 0;
-        set<node>::iterator qIt;
+
 
         while(!stateQueue.empty()){
 
 
+
+
         // (2) If Q is empty, fail.  Else, pick some search node N from Q.
-            qIt = stateQueue.begin();
-            cout<<"Just before new node is initialised from qIter" << endl;
-            curr = node((*qIt));
-            cout <<"Successfull" << endl;
+
+            cout<<"Looking at front node" << endl;
+            curr = node((stateQueue.front()));
+            cout <<"Successful, Cost of curr = " << curr.getCost() << endl;
             
 
             
@@ -128,9 +129,10 @@ public:
                 cout << "\n\nFound Path!!\n\n";
                 return; 
             }
+
             ++stateExpansions;
         //     If not, Take N from Q and Expand
-            stateQueue.erase(qIt);
+            pop_heap(stateQueue.begin(),stateQueue.end());
             cout <<"Successfull 2" << endl;
         // (4) If State N is already in Expanded List, Discard and move to step 2
             //If Current State exists in Expanded, will return greater than 0
@@ -176,7 +178,8 @@ public:
                 }
             }
         
-
+            push_heap(stateQueue.begin(),stateQueue.end());
+            sort_heap(stateQueue.begin(),stateQueue.end());
         // (7) Go to 2
 
         }
@@ -188,7 +191,7 @@ public:
         
         child->updateCost(heuristic);
         cout <<"Successfull 5" << endl;
-        set<node>::iterator qIt;
+        vector<node>::iterator qIt;
         qIt = stateQueue.begin();
         cout <<"Successfull 6" << endl;
         //Check if the Child Node's State already exists in the Queue
@@ -207,7 +210,7 @@ public:
                     cout<<"\nSwapped from Queue, found the same";
                     node temp = node(*child);
                     temp.addToLocal(temp.strBoard);
-                    stateQueue.insert(temp);
+                    stateQueue.push_back(temp);
                     cout << "Added\n";
                     //delete child;
                     return;
@@ -229,7 +232,7 @@ public:
         cout <<" No duplicates found... \nSuccessfull 7" << endl;
         temp.addToLocal(temp.strBoard);
         cout <<"Successfull 8" << endl;
-        stateQueue.insert(temp);
+        stateQueue.push_back(temp);
         cout <<"Successfull 9" << endl;    
         //delete child;
         return;
@@ -238,4 +241,6 @@ public:
 
 
 };
+
+
 #endif

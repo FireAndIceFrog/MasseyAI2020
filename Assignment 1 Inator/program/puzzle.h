@@ -39,7 +39,7 @@ public:
     void printBoard();
     int h(int hFunction);   
     
-    void updateCost(int hFunction);
+    virtual void updateCost(int hFunction);
     void updateDepth(){
 		 depth++;
 	}		 
