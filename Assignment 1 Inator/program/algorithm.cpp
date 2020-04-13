@@ -2,6 +2,7 @@
 
 #include "algorithm.h"
 #include "bestFirstVis.cpp"
+#include "bestFirstNoVis.cpp"
 #include "PDSSL.cpp"
 #include "PDSNSL.cpp"
 #include "AStar.cpp"

@@ -156,8 +156,8 @@ public:
         // (6) Add all the extended paths, if Child already in Q, keep Smaller F Cost
             if(curr.canMoveDown()) {
                 cout <<"Successfull down" << endl;
-                node child = node(curr.moveDown());
-                if(!curr.existsInLocal(child.h)){
+                node* child = (node*)(curr.moveDown());
+                if(!curr.existsInLocal(child->strBoard)){
                     pushChild(child);
                     
                 }

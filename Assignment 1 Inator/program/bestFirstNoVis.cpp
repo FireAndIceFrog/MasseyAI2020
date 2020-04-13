@@ -31,7 +31,7 @@ class BFNV {
         node(string const elements, string const goal):Puzzle(elements,goal){};
         unordered_set<std::string> visited;
         bool operator> ( const node& rhs) const{
-	        return this->getHCost() > rhs.getHCost();
+	        return this->getCost() > rhs.getCost();
         }
 
     };
@@ -80,7 +80,7 @@ class BFNV {
                
                 node child =  node(curr.moveDown()).setVisited(curr.visited);
 
-                child.updateHCost(heuristic);
+                child.updateCost(heuristic);
                 //moving to stack This is mostly constant time.
                 // cout<<"Can move down, IS VISITED in CHILD NODE -> COUNT: "<<child->visited.count(child->toString())<<nl;
                 if(child.visited.count(child.toString()) == 0) { 
@@ -92,7 +92,7 @@ class BFNV {
             } 
             if(curr.canMoveRight()) {
                 node child =  node(curr.moveRight()).setVisited(curr.visited);
-                child.updateHCost(heuristic);
+                child.updateCost(heuristic);
                 //moving to stack This is mostly constant time.
                 // cout<<"Can move down, IS VISITED in CHILD NODE -> COUNT: "<<child->visited.count(child->toString())<<nl;
                 if(child.visited.count(child.toString()) == 0) { 
@@ -105,7 +105,7 @@ class BFNV {
             if(curr.canMoveUp()) {
 
                 node child =  node(curr.moveUp()).setVisited(curr.visited);
-                child.updateHCost(heuristic);
+                child.updateCost(heuristic);
                 //moving to stack This is mostly constant time.
                 // cout<<"Can move down, IS VISITED in CHILD NODE -> COUNT: "<<child->visited.count(child->toString())<<nl;
                 if(child.visited.count(child.toString()) == 0) { 
@@ -117,7 +117,7 @@ class BFNV {
             }
             if(curr.canMoveLeft()) {
                 node child =  node(curr.moveLeft()).setVisited(curr.visited);
-                child.updateHCost(heuristic);
+                child.updateCost(heuristic);
                 //moving to stack This is mostly constant time.
                 // cout<<"Can move down, IS VISITED in CHILD NODE -> COUNT: "<<child->visited.count(child->toString())<<nl;
                 if(child.visited.count(child.toString()) == 0) { 
