@@ -5,6 +5,10 @@
         "xstring": "cpp",
         "xhash": "cpp",
         "unordered_set": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "set": "cpp",
+        "iostream": "cpp",
+        "algorithm": "cpp",
+        "queue": "cpp"
     }
 }

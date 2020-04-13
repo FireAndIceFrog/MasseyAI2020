@@ -24,11 +24,32 @@ private:
 
     class node : public Puzzle {
 
+    protected:
+
+    unordered_set<string> local_list;
+
     public:
         //Constructor: Takes a constant referance to a node and copies
-        node(const node &p):Puzzle(p){}; 
+        node(const node &p):Puzzle(p){
+            unordered_set<string> local_list (p.local_list);
+        }; 
         //Constructor: Constructs from Initial given state
-        node(string const elements, string const goal):Puzzle(elements,goal){};
+        node(string const elements, string const goal):Puzzle(elements,goal){
+            unordered_set<string> local_list;
+            local_list.insert(strBoard);
+        };
+
+        void addToLocal(string state){
+            local_list.insert(state);
+        }
+        
+        bool existsInLocal(string state){
+            if(local_list.count(state) > 0){
+                return true;
+            } else {
+                return false;
+            }
+        }
 
         //Overriding the updateCost func
         void updateCost(int hFunction){
@@ -39,16 +60,19 @@ private:
             cost = h(hFunction) + depth;
         }
 
+        bool cmp(const node &a, const node &b){
+            return a.cost > b.cost;
+        }
+
         //Less than Operator Overload for the Priority Queue
-        bool operator> ( const node& rhs) const{
-	        return this->getCost() > rhs.getCost();
+        bool operator< ( const node& rhs) const{
+	        return this->getCost() < rhs.getCost();
         }
     };
 
     //Queue
-    //priority_queue<node, std::vector<node>, std::greater<node> > stateQueue;
-    set<node> stateQueue;
-    set<node>::iterator qIt;
+    vector<node> stateQueue();
+    make_heap();
     //vector<node> &iterableQueue = Container(stateQueue);
     unordered_set<string> expanded;
     
@@ -81,23 +105,19 @@ public:
         // (1) Initialise Q with search node (S) as only entry; set Expanded = ()
 
         node curr = node(init, goal);
+        cout<<"Node is made"<< endl;
         stateQueue.insert(curr);
         int sQSize = 0;
+        set<node>::iterator qIt;
 
         while(!stateQueue.empty()){
-
-            curr.printBoard();
-            
-            if(sQSize > 50 ){
-                return;
-            } else {
-                sQSize++;
-            }
 
 
         // (2) If Q is empty, fail.  Else, pick some search node N from Q.
             qIt = stateQueue.begin();
+            cout<<"Just before new node is initialised from qIter" << endl;
             curr = node((*qIt));
+            cout <<"Successfull" << endl;
             
 
             
@@ -111,7 +131,7 @@ public:
             ++stateExpansions;
         //     If not, Take N from Q and Expand
             stateQueue.erase(qIt);
-
+            cout <<"Successfull 2" << endl;
         // (4) If State N is already in Expanded List, Discard and move to step 2
             //If Current State exists in Expanded, will return greater than 0
             if(expanded.count(curr.getPath()) != 0){
@@ -125,21 +145,35 @@ public:
         // (5) Find all children of N (Not in expanded) and create them
         // (6) Add all the extended paths, if Child already in Q, keep Smaller F Cost
             if(curr.canMoveDown()) {
+                cout <<"Successfull down" << endl;
                 node* child = (node*)curr.moveDown();
-                pushChild(child);
+                if(!curr.existsInLocal(child->strBoard)){
+                    pushChild(child);
+                    
+                }
             } 
             if(curr.canMoveRight()) {
+                cout <<"Successfull right" << endl;
                 node* child = (node*)curr.moveRight();
-                pushChild(child);
+                if(!curr.existsInLocal(child->strBoard)){
+                    pushChild(child);
+                    cout <<"Successfull push" << endl;
+                }
             } 
             if(curr.canMoveUp()) {
+                cout <<"Successfull up" << endl;
                 node* child = (node*)curr.moveUp();
-                pushChild(child);
+                if(!curr.existsInLocal(child->strBoard)){
+                    pushChild(child);
+                }
 
             }
             if(curr.canMoveLeft()) {
+                cout <<"Successfull left" << endl;
                 node* child = (node*)curr.moveLeft();
-                pushChild(child);
+                if(!curr.existsInLocal(child->strBoard)){
+                    pushChild(child);
+                }
             }
         
 
@@ -151,34 +185,54 @@ public:
     //Insert a Child into the queue correctly and update the expanded list
     void pushChild(node* child){
 
-        bool exists = false;
-        child->updateCost(heuristic);
         
+        child->updateCost(heuristic);
+        cout <<"Successfull 5" << endl;
+        set<node>::iterator qIt;
+        qIt = stateQueue.begin();
+        cout <<"Successfull 6" << endl;
         //Check if the Child Node's State already exists in the Queue
-        for(qIt = stateQueue.begin(); qIt != stateQueue.end(); ){
+        while(qIt != stateQueue.end()){
+            cout <<"Checking queue for doubles..";
             // If the states are the same and If the child being examined is cheaper than the node in the queue
-            if( (*qIt).strBoard == child->strBoard && (*qIt).getCost() > child->getCost()){
-                //State already exists, so theoretically this should be the only insertion (1 for 1 swap, only one state can exist at one time)
-                exists = true;
-                //erase returns an iterator to the next position in the set
-                qIt = stateQueue.erase(qIt);
-                //COME BACK HERE TO TEST FOR EFFICIENCY
-                //Might be a problem if next in the queue has same fCost
-                cout<<"\nSwapped from Queue, foudn the same";
-                stateQueue.insert(node(*child));
+            if( (*qIt).strBoard == child->strBoard){
+                cout << "\nFound Duplicate State!";
+                if((*qIt).getCost() > child->getCost()){
+                    cout <<"  And it has lower cost" << endl;
+                    //State already exists, so theoretically this should be the only insertion (1 for 1 swap, only one state can exist at one time)
+                    //erase returns an iterator to the next position in the set
+                    qIt = stateQueue.erase(qIt);
+                    //COME BACK HERE TO TEST FOR EFFICIENCY
+                    //Might be a problem if next in the queue has same fCost
+                    cout<<"\nSwapped from Queue, found the same";
+                    node temp = node(*child);
+                    temp.addToLocal(temp.strBoard);
+                    stateQueue.insert(temp);
+                    cout << "Added\n";
+                    //delete child;
+                    return;
+                } else {
+                    cout << "  Does not have lower Cost!" << endl;
+                    //delete child;
+                    return;
+                }
                    
             } else {
+
                 qIt++;
             }
         }
-        //State is a new state
-        if(!exists){
-            //Add to queue
-            stateQueue.insert(node(*child));
-        }
-
         
-        delete child;
+        //State is a new state
+        //Add to queue
+        node temp = node(*child);
+        cout <<" No duplicates found... \nSuccessfull 7" << endl;
+        temp.addToLocal(temp.strBoard);
+        cout <<"Successfull 8" << endl;
+        stateQueue.insert(temp);
+        cout <<"Successfull 9" << endl;    
+        //delete child;
+        return;
     }
 
 
