@@ -36,7 +36,6 @@ private:
 
         node(const Puzzle *p):Puzzle(*p){
             this->local_list = unordered_set<string>();
-            this->depth++;
             delete p;
         }
         //Constructor: Constructs from Initial given state
@@ -71,9 +70,9 @@ private:
 //        }
 
         //Less than Operator Overload for the Priority Queue
-        // bool operator< ( const node& rhs) const{
-	    //     return this->getCost() < rhs.getCost();
-        // }
+        bool operator< ( const node& rhs) const{
+	        return this->getCost() < rhs.getCost();
+        }
     };
 
     //Queue
@@ -81,11 +80,6 @@ private:
 
     //Expanded list
     unordered_set<string> expanded;
-
-    struct SearchNode {
-        string state;
-        vector<node>::iterator searchIter;
-    };
     
     //Details for Output
     size_t maxQLen;
@@ -120,162 +114,150 @@ public:
         curr.getLocal().insert(init);
         curr.updateCost(heuristic);
         stateQueue.push_back(curr);
-        
-        //make_heap(stateQueue.begin(), stateQueue.end());
+
+        make_heap(stateQueue.begin(), stateQueue.end());
 
         int sQSize = 0;
 
 
         while(!stateQueue.empty()){
-        
+        //while(!sQSize == 3){
+            
+            //sQSize++;
+
+
         // (2) If Q is empty, fail.  Else, pick some search node N from Q.
-            for(int i = 0; i < stateQueue.size(); i++){
-                cout << stateQueue[i].getCost() << "  ";
-            }
+
             //cout<<"Looking at curr node,  ";
-            //sort_heap(stateQueue.begin(),stateQueue.end());
-            curr = node((stateQueue.back()));
+            curr = node((stateQueue.front()));
             //cout <<"Cost of curr = " << curr.getCost() << endl;
             //curr.printBoard();
-             cout << "\nCOST OF CURR:" << curr.getCost()<< endl;
+            
+
             
         // (3) Check if N is goal State. 
         //     If it is, return N
+        maxQLen = std::max(maxQLen, stateQueue.size());
             if (curr.strBoard == goal) { 
                 path = curr.getPath(); 
                 //cout << "\n\nFound Path!!\n\n";
                 return; 
             }
 
-            
+            stateExpansions++;
         //     If not, Take N from Q and Expand
-            //pop_heap(stateQueue.begin(),stateQueue.end());
+            pop_heap(stateQueue.begin(),stateQueue.end());
             stateQueue.pop_back();
-            
             //cout <<"Pop Queue" << endl;
         // (4) If State N is already in Expanded List, Discard and move to step 2
             //If Current State exists in Expanded, will return greater than 0
-            // if(expanded.count(curr.strBoard) != 0){
-            //     //State already exists, Skip back to Step 2
-            //     //cout<<"\nAlready exists, discard node\n";
-            //     continue;
-            // }
+            if(expanded.count(curr.strBoard) != 0){
+                //State already exists, Skip back to Step 2
+                //cout<<"\nAlready exists, discard node\n";
+                continue;
+            }
             //Now add to expanded list
             expanded.insert(curr.strBoard);
-            stateExpansions++;
-
-           
 
         // (5) Find all children of N (Not in expanded) and create them
         // (6) Add all the extended paths, if Child already in Q, keep Smaller F Cost
-            if(curr.canMoveDown()) {
-                //cout <<"Successfull down child:" << endl;
-                node child = node(curr.moveDown());
-                //Checks if the state of the Child exists in the local list of the current
-                if(!curr.existsInLocal(child.strBoard) && expanded.count(child.strBoard) == 0){
-                    child.setLocal(curr.getLocal());
-                    child.getLocal().insert(child.strBoard);
-                    pushChild(child);
-                }
-            } 
-            if(curr.canMoveRight()) {
-                //cout <<"Successfull right child:" << endl;
-                node child = node(curr.moveRight());
-                //Checks if the state of the Child exists in the local list of the current
-                if(!curr.existsInLocal(child.strBoard) && expanded.count(child.strBoard) == 0){
-                    child.setLocal(curr.getLocal());
-                    child.getLocal().insert(child.strBoard);
-                    pushChild(child);
-                }
-            } 
-            if(curr.canMoveUp()) {
-                //cout <<"Successfull up child:" << endl;
-                node child = node(curr.moveUp());
-                //Checks if the state of the Child exists in the local list of the current
-                if(!curr.existsInLocal(child.strBoard) && expanded.count(child.strBoard) == 0){
-                    child.setLocal(curr.getLocal());
-                    child.getLocal().insert(child.strBoard);
-                    pushChild(child);
-                }
-
-            }
             if(curr.canMoveLeft()) {
                 //cout <<"Successfull left child:" << endl;
                 node child = node(curr.moveLeft());
                 //Checks if the state of the Child exists in the local list of the current
-                if(!curr.existsInLocal(child.strBoard) && expanded.count(child.strBoard) == 0){
+                if(!curr.existsInLocal(child.strBoard)){
                     child.setLocal(curr.getLocal());
                     child.getLocal().insert(child.strBoard);
                     pushChild(child);
                 }
             }
-        
-            // push_heap(stateQueue.begin(),stateQueue.end());
-            // sort_heap(stateQueue.begin(),stateQueue.end());
+            if(curr.canMoveUp()) {
+                //cout <<"Successfull up child:" << endl;
+                node child = node(curr.moveUp());
+                //Checks if the state of the Child exists in the local list of the current
+                if(!curr.existsInLocal(child.strBoard)){
+                    child.setLocal(curr.getLocal());
+                    child.getLocal().insert(child.strBoard);
+                    pushChild(child);
+                }
 
-            maxQLen = std::max(maxQLen, stateQueue.size());
-        // (7) Go to 2
+            }
+            if(curr.canMoveRight()) {
+                //cout <<"Successfull right child:" << endl;
+                node child = node(curr.moveRight());
+                //Checks if the state of the Child exists in the local list of the current
+                if(!curr.existsInLocal(child.strBoard)){
+                    child.setLocal(curr.getLocal());
+                    child.getLocal().insert(child.strBoard);
+                    pushChild(child);
+                }
+            } 
+            if(curr.canMoveDown()) {
+                //cout <<"Successfull down child:" << endl;
+                node child = node(curr.moveDown());
+                //Checks if the state of the Child exists in the local list of the current
+                if(!curr.existsInLocal(child.strBoard)){
+                    child.setLocal(curr.getLocal());
+                    child.getLocal().insert(child.strBoard);
+                    pushChild(child);
+                }
+            } 
+            
+            
+            
+        
+            push_heap(stateQueue.begin(),stateQueue.end());
+            sort_heap(stateQueue.begin(),stateQueue.end());
+            // (7) Go to 2
+            
 
         }
 
     }
     //Insert a Child into the queue correctly and update the expanded list
     void pushChild(node child){
-        
-        
+
         
         child.updateCost(heuristic);
-        cout <<"-------- In Child ----------\nStateQueue size : "<< stateQueue.size()<<"\nChild Cost: " << child.getCost()<< endl;
+        //cout <<"-------- In Child ----------\nChild Cost: " << child.getCost()<< endl;
         //child.printBoard();
-        vector<node>::iterator qIt; 
-        vector<node>::iterator costIter = stateQueue.end();
-        bool found = false;
-        if(stateQueue.empty()){
-            cout<<"This bitch empty, yeet\n";
-            stateQueue.push_back(child);
-            return;
-        }
+        vector<node>::iterator qIt;
+        qIt = stateQueue.begin();
         //Check if the Child Node's State already exists in the Queue
-        for(qIt = stateQueue.end(); qIt != stateQueue.begin(); qIt--){
-            cout <<"Checking queue for doubles..";
+        while(qIt != stateQueue.end()){
+            //cout <<"Checking queue for doubles..";
             // If the states are the same and If the child being examined is cheaper than the node in the queue
-            if((*qIt).strBoard == child.strBoard){
-                cout << "\nFound Duplicate State!";
+            if( (*qIt).strBoard == child.strBoard){
+                //cout << "\nFound Duplicate State!";
                 if((*qIt).getCost() > child.getCost()){
-                    cout <<"  And it has lower cost" << endl;
+                    //cout <<"  And it has lower cost" << endl;
                     //State already exists, so theoretically this should be the only insertion (1 for 1 swap, only one state can exist at one time)
                     //erase returns an iterator to the next position in the set
                     qIt = stateQueue.erase(qIt);
                     //COME BACK HERE TO TEST FOR EFFICIENCY
                     //Might be a problem if next in the queue has same fCost
-                    cout<<"\nSwapped from Queue, found the same";
-                    stateQueue.insert(qIt, child);
-                    cout << "Added\n-----------------------\n";
+                    //cout<<"\nSwapped from Queue, found the same";
+                    stateQueue.push_back(child);
+                    //cout << "Added\n-----------------------\n";
                     //delete child;
                     return;
                 } else {
-                    cout << "  Does not have lower Cost!\n----------------------\n" << endl;
+                    //cout << "  Does not have lower Cost!\n----------------------\n" << endl;
                     //delete child;
                     return;
                 }
                    
             } else {
-                //As it checks the queue, it gets an iterator for the first point it finds an equal to or greater cost
-                if((*qIt).getCost() >= child.getCost() && found == false ){
-                    costIter = ++qIt;
-                    found = true;
-                }
-                
+
+                qIt++;
             }
         }
-        cout << "\n\n\n\n";
+        
         //State is a new state
         //Add to queue
-        cout <<" No duplicates found..." << endl;
-        stateQueue.insert(costIter, child);
-        //push_heap(stateQueue.begin(),stateQueue.end());
-        
-        cout <<"Successfull add to queun------------------------\n" << endl;    
+        //cout <<" No duplicates found..." << endl;
+        stateQueue.push_back(child);
+        //cout <<"Successfull add to queun------------------------\n" << endl;    
         //delete child;
         return;
     }
