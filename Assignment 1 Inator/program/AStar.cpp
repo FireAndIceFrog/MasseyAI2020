@@ -143,18 +143,20 @@ public:
                 return; 
             }
 
-            stateExpansions++;
-        //     If not, Take N from Q and Expand
             pop_heap(stateQueue.begin(),stateQueue.end());
             stateQueue.pop_back();
+            stateExpansions++;
+        //     If not, Take N from Q and Expand
             //cout <<"Pop Queue" << endl;
         // (4) If State N is already in Expanded List, Discard and move to step 2
             //If Current State exists in Expanded, will return greater than 0
-            if(expanded.count(curr.getPath()) != 0){
+            if(expanded.count(curr.strBoard) != 0){
                 //State already exists, Skip back to Step 2
                 //cout<<"\nAlready exists, discard node\n";
                 continue;
             }
+
+            
             //Now add to expanded list
             expanded.insert(curr.strBoard);
 
@@ -164,7 +166,7 @@ public:
                 //cout <<"Successfull down child:" << endl;
                 node child = node(curr.moveDown());
                 //Checks if the state of the Child exists in the local list of the current
-                if(!curr.existsInLocal(child.strBoard)){
+                if(!curr.existsInLocal(child.strBoard) && expanded.count(child.strBoard) == 0){
                     child.setLocal(curr.getLocal());
                     child.getLocal().insert(child.strBoard);
                     pushChild(child);
@@ -174,7 +176,7 @@ public:
                 //cout <<"Successfull right child:" << endl;
                 node child = node(curr.moveRight());
                 //Checks if the state of the Child exists in the local list of the current
-                if(!curr.existsInLocal(child.strBoard)){
+                if(!curr.existsInLocal(child.strBoard)&& expanded.count(child.strBoard) == 0){
                     child.setLocal(curr.getLocal());
                     child.getLocal().insert(child.strBoard);
                     pushChild(child);
@@ -184,7 +186,7 @@ public:
                 //cout <<"Successfull up child:" << endl;
                 node child = node(curr.moveUp());
                 //Checks if the state of the Child exists in the local list of the current
-                if(!curr.existsInLocal(child.strBoard)){
+                if(!curr.existsInLocal(child.strBoard)&& expanded.count(child.strBoard) == 0){
                     child.setLocal(curr.getLocal());
                     child.getLocal().insert(child.strBoard);
                     pushChild(child);
@@ -195,7 +197,7 @@ public:
                 //cout <<"Successfull left child:" << endl;
                 node child = node(curr.moveLeft());
                 //Checks if the state of the Child exists in the local list of the current
-                if(!curr.existsInLocal(child.strBoard)){
+                if(!curr.existsInLocal(child.strBoard) && expanded.count(child.strBoard) == 0){
                     child.setLocal(curr.getLocal());
                     child.getLocal().insert(child.strBoard);
                     pushChild(child);
