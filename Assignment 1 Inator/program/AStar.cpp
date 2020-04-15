@@ -52,7 +52,7 @@ private:
         }
         
         bool existsInLocal(const string& state){
-            cout << "Checking in local\n";
+            //cout << "Checking in local\n";
             return local_list.count(state) > 0;
         }
 
@@ -110,7 +110,7 @@ public:
         // (1) Initialise Q with search node (S) as only entry; set Expanded = ()
 
         node curr = node(init, goal);
-        cout<<"Node is made"<< endl;
+        //cout<<"Node is made"<< endl;
         curr.getLocal().insert(init);
         curr.updateCost(heuristic);
         stateQueue.push_back(curr);
@@ -128,10 +128,10 @@ public:
 
         // (2) If Q is empty, fail.  Else, pick some search node N from Q.
 
-            cout<<"Looking at curr node,  ";
+            //cout<<"Looking at curr node,  ";
             curr = node((stateQueue.front()));
-            cout <<"Cost of curr = " << curr.getCost() << endl;
-            curr.printBoard();
+            //cout <<"Cost of curr = " << curr.getCost() << endl;
+            //curr.printBoard();
             
 
             
@@ -139,7 +139,7 @@ public:
         //     If it is, return N
             if (curr.strBoard == goal) { 
                 path = curr.getPath(); 
-                cout << "\n\nFound Path!!\n\n";
+                //cout << "\n\nFound Path!!\n\n";
                 return; 
             }
 
@@ -147,12 +147,12 @@ public:
         //     If not, Take N from Q and Expand
             pop_heap(stateQueue.begin(),stateQueue.end());
             stateQueue.pop_back();
-            cout <<"Pop Queue" << endl;
+            //cout <<"Pop Queue" << endl;
         // (4) If State N is already in Expanded List, Discard and move to step 2
             //If Current State exists in Expanded, will return greater than 0
             if(expanded.count(curr.getPath()) != 0){
                 //State already exists, Skip back to Step 2
-                cout<<"\nAlready exists, discard node\n";
+                //cout<<"\nAlready exists, discard node\n";
                 continue;
             }
             //Now add to expanded list
@@ -161,7 +161,7 @@ public:
         // (5) Find all children of N (Not in expanded) and create them
         // (6) Add all the extended paths, if Child already in Q, keep Smaller F Cost
             if(curr.canMoveDown()) {
-                cout <<"Successfull down child:" << endl;
+                //cout <<"Successfull down child:" << endl;
                 node child = node(curr.moveDown());
                 //Checks if the state of the Child exists in the local list of the current
                 if(!curr.existsInLocal(child.strBoard)){
@@ -171,7 +171,7 @@ public:
                 }
             } 
             if(curr.canMoveRight()) {
-                cout <<"Successfull right child:" << endl;
+                //cout <<"Successfull right child:" << endl;
                 node child = node(curr.moveRight());
                 //Checks if the state of the Child exists in the local list of the current
                 if(!curr.existsInLocal(child.strBoard)){
@@ -181,7 +181,7 @@ public:
                 }
             } 
             if(curr.canMoveUp()) {
-                cout <<"Successfull up child:" << endl;
+                //cout <<"Successfull up child:" << endl;
                 node child = node(curr.moveUp());
                 //Checks if the state of the Child exists in the local list of the current
                 if(!curr.existsInLocal(child.strBoard)){
@@ -192,9 +192,8 @@ public:
 
             }
             if(curr.canMoveLeft()) {
-                cout <<"Successfull left child:" << endl;
+                //cout <<"Successfull left child:" << endl;
                 node child = node(curr.moveLeft());
-                child.printBoard();
                 //Checks if the state of the Child exists in the local list of the current
                 if(!curr.existsInLocal(child.strBoard)){
                     child.setLocal(curr.getLocal());
@@ -215,30 +214,30 @@ public:
 
         
         child.updateCost(heuristic);
-        cout <<"-------- In Child ----------\nChild Cost: " << child.getCost()<< endl;
-        child.printBoard();
+        //cout <<"-------- In Child ----------\nChild Cost: " << child.getCost()<< endl;
+        //child.printBoard();
         vector<node>::iterator qIt;
         qIt = stateQueue.begin();
         //Check if the Child Node's State already exists in the Queue
         while(qIt != stateQueue.end()){
-            cout <<"Checking queue for doubles..";
+            //cout <<"Checking queue for doubles..";
             // If the states are the same and If the child being examined is cheaper than the node in the queue
             if( (*qIt).strBoard == child.strBoard){
-                cout << "\nFound Duplicate State!";
+                //cout << "\nFound Duplicate State!";
                 if((*qIt).getCost() > child.getCost()){
-                    cout <<"  And it has lower cost" << endl;
+                    //cout <<"  And it has lower cost" << endl;
                     //State already exists, so theoretically this should be the only insertion (1 for 1 swap, only one state can exist at one time)
                     //erase returns an iterator to the next position in the set
                     qIt = stateQueue.erase(qIt);
                     //COME BACK HERE TO TEST FOR EFFICIENCY
                     //Might be a problem if next in the queue has same fCost
-                    cout<<"\nSwapped from Queue, found the same";
+                    //cout<<"\nSwapped from Queue, found the same";
                     stateQueue.push_back(child);
-                    cout << "Added\n-----------------------\n";
+                    //cout << "Added\n-----------------------\n";
                     //delete child;
                     return;
                 } else {
-                    cout << "  Does not have lower Cost!\n----------------------\n" << endl;
+                    //cout << "  Does not have lower Cost!\n----------------------\n" << endl;
                     //delete child;
                     return;
                 }
@@ -251,9 +250,9 @@ public:
         
         //State is a new state
         //Add to queue
-        cout <<" No duplicates found..." << endl;
+        //cout <<" No duplicates found..." << endl;
         stateQueue.push_back(child);
-        cout <<"Successfull add to queun------------------------\n" << endl;    
+        //cout <<"Successfull add to queun------------------------\n" << endl;    
         //delete child;
         return;
     }
