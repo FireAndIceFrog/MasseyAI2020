@@ -105,7 +105,7 @@ public:
     size_t getMaxQLen() {
         return maxQLen;
     }
-
+    
     void search(){
         // (1) Initialise Q with search node (S) as only entry; set Expanded = ()
 

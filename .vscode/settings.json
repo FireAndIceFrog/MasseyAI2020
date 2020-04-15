@@ -9,6 +9,7 @@
         "set": "cpp",
         "iostream": "cpp",
         "algorithm": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "tuple": "cpp"
     }
 }
