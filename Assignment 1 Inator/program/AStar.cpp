@@ -110,7 +110,7 @@ public:
         // (1) Initialise Q with search node (S) as only entry; set Expanded = ()
 
         node curr = node(init, goal);
-        //cout<<"Node is made"<< endl;
+        cout<<"Node is made"<< endl;
         curr.getLocal().insert(init);
         curr.updateCost(heuristic);
         stateQueue.push_back(curr);
@@ -128,9 +128,9 @@ public:
 
         // (2) If Q is empty, fail.  Else, pick some search node N from Q.
 
-            //cout<<"Looking at curr node,  ";
+            cout<<"Looking at curr node,  ";
             curr = node((stateQueue.front()));
-            //cout <<"Cost of curr = " << curr.getCost() << endl;
+            cout <<"Cost of curr = " << curr.getCost() << endl;
             //curr.printBoard();
             
 
@@ -226,6 +226,7 @@ public:
         //Check if the Child Node's State already exists in the Queue
         while(qIt != stateQueue.end()){
             //cout <<"Checking queue for doubles..";
+            cout << qIt->getCost() << "  ";
             // If the states are the same and If the child being examined is cheaper than the node in the queue
             if( (*qIt).strBoard == child.strBoard){
                 //cout << "\nFound Duplicate State!";
@@ -252,7 +253,7 @@ public:
                 qIt++;
             }
         }
-        
+        cout << "\n\n\n";
         //State is a new state
         //Add to queue
         //cout <<" No duplicates found..." << endl;
