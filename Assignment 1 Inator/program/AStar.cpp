@@ -73,7 +73,7 @@ private:
 
 
         //Less than Operator Overload for the Priority Queue
-        bool operator<= ( const node& rhs) const{
+        bool operator< ( const node& rhs) const{
 	        return this->getCost() < rhs.getCost();
         }
 
@@ -123,6 +123,7 @@ public:
         curr.insertToLocal(init);
         curr.updateCost(heuristic);
         stateQueue.push_back(curr);
+        make_heap(stateQueue.begin(), stateQueue.end());
 
         int sQSize = 0;
 
@@ -133,9 +134,11 @@ public:
             //sQSize++;
         // (2) If Q is empty, fail.  Else, pick some search node N from Q.
             cout<<"\n\n\nLooking at new lowest node,  ";
-            curr = stateQueue.back();
+            curr = stateQueue.front();
             cout <<"Cost of curr = " << curr.getCost() << endl;
             curr.printBoard();
+
+
 
             maxQLen = std::max(maxQLen, stateQueue.size());
             
@@ -150,7 +153,7 @@ public:
 
 
         //     If not, Take N from Q and Expand
-
+            pop_heap(stateQueue.begin(),stateQueue.end());
             stateQueue.pop_back();
             cout <<"\nPop Queue\n\n" << endl;
         // (4) If State N is already in Expanded List, Discard and move to step 2
@@ -216,9 +219,9 @@ public:
                 }
             }
 
-            sort(stateQueue.begin(), stateQueue.end(), cmp);
-
-            // (7) Go to 2
+            push_heap(stateQueue.begin(),stateQueue.end());
+            sort_heap(stateQueue.begin(),stateQueue.end());
+        // (7) Go to 2
 
 
         }
