@@ -132,7 +132,7 @@ public:
             
             //sQSize++;
         // (2) If Q is empty, fail.  Else, pick some search node N from Q.
-            cout<<"Looking at curr node,  ";
+            cout<<"\n\n\nLooking at new lowest node,  ";
             curr = stateQueue.back();
             cout <<"Cost of curr = " << curr.getCost() << endl;
             curr.printBoard();
