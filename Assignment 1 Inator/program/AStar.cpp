@@ -94,6 +94,8 @@ private:
     string init;
     string goal;
     int stateExpansions;
+    int numDeletionsFromMiddle;
+    int numLocalLoops;
     int heuristic;
 
 public:
@@ -113,6 +115,14 @@ public:
         return maxQLen;
     }
 
+    int getNumDeletions(){
+        return numDeletionsFromMiddle;
+    }
+
+    int getLocalLoops(){
+        return numLocalLoops;
+    }
+
     static bool cmp(const node &a, const node &b) {
         return a.getCost() > b.getCost();
     }
@@ -129,7 +139,8 @@ public:
         make_heap(stateQueue.begin(), stateQueue.end(), cmp);
 
 
-        int sQSize = 0;
+        numDeletionsFromMiddle = 0;
+        numLocalLoops = 0;
 
 
         while(!stateQueue.empty()){
@@ -166,6 +177,7 @@ public:
             if(expanded.count(curr.strBoard) != 0){
                 //State already exists, Skip back to Step 2
                 //cout<<"\nAlready exists, discard node\n";
+                numDeletionsFromMiddle++;
                 continue;
             }
             //Now add to expanded list
@@ -183,6 +195,7 @@ public:
                     child.insertToLocal(child.strBoard);
                     pushChild(child);
                 } else {
+                    numLocalLoops++;
                    // cout << "Found in local list, local loop avoided\n";
                 }
             }
@@ -195,6 +208,7 @@ public:
                     child.insertToLocal(child.strBoard);
                     pushChild(child);
                 }else {
+                    numLocalLoops++;
                   //  cout << "Found in local list, local loop avoided\n";
                 }
 
@@ -208,6 +222,7 @@ public:
                     child.insertToLocal(child.strBoard);
                     pushChild(child);
                 }else {
+                    numLocalLoops++;
                     //cout << "Found in local list, local loop avoided\n";
                 }
             } 
@@ -220,6 +235,7 @@ public:
                     child.insertToLocal(child.strBoard);
                     pushChild(child);
                 }else {
+                    numLocalLoops++;
                     //cout << "Found in local list, local loop avoided\n";
                 }
             }

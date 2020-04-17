@@ -205,6 +205,8 @@ string aStar_ExpandedList(string const initialState, string const goalState, int
 	path = item->getPath();
 	numOfStateExpansions = item->getStateExpansions();
 	maxQLength = item->getMaxQLen();
+	numOfDeletionsFromMiddleOfHeap = item->getNumDeletions();
+	numOfLocalLoopsAvoided = item->getLocalLoops();
 	
 //***********************************************************************************************************
 	actualRunningTime = ((float)(clock() - startTime)/CLOCKS_PER_SEC);
