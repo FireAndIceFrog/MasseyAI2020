@@ -19,9 +19,9 @@ echo.
 @echo ==============================================================================================================
 @echo INIT_STATE (1): 608435127, GOAL_STATE: 123456780 
 @echo INIT_STATE (2): 743286051, GOAL_STATE: 123456780
-@echo INIT_STATE (3): 628035471, GOAL_STATE: 123804765
-@echo INIT_STATE (4): 041532786, GOAL_STATE: 123456780
-@echo INIT_STATE (5): 835642107, GOAL_STATE: 123456780
+@echo INIT_STATE (3): 647850321, GOAL_STATE: 123456780
+@echo INIT_STATE (4): 185024367, GOAL_STATE: 123456780
+@echo INIT_STATE (5): 867254301, GOAL_STATE: 123456780
 
 echo.
 set /p testcase="Select Test Case: "
@@ -45,19 +45,19 @@ if %selection% == 1 (
 
 
 if %testcase% == 1 (    
-    set param2= 087654321 123456780
+    set param2= 608435127 123456780
         
 ) else if %testcase% == 2 (
     set param2= 743286051 123456780
     
 ) else if %testcase% == 3 (
-    set param2= 628035471 123804765
+    set param2= 647850321 123456780
     
 ) else if %testcase% == 4 (
-   set param2= 041532786 123456780
+   set param2= 185024367 123456780
     
 ) else if %testcase% == 5 (
-    set param2= 835642107 123456780
+    set param2= 867254301 123456780
 
 ) 
 

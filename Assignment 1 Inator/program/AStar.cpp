@@ -152,7 +152,6 @@ public:
 
             if (curr.strBoard == goal) { 
                 path = curr.getPath(); 
-                cout << "\n\nFound Path!!\n\n";
                 return; 
             }
 

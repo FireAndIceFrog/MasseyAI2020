@@ -48,13 +48,16 @@ class BFNV {
     string path;
     string init;
     string goal;
+    int LocalLoopsAvoided;
     int stateExpansions;
     public:
     //set up the base variables.
     BFNV(string start, string goal):maxQLen{0}, path{""},goal{goal}, init{start}, stateExpansions{0}{
-        
+        LocalLoopsAvoided = 0;
     }
-
+    int getLocalLoops(){
+        return LocalLoopsAvoided;
+    }
     string getPath(){
         return path;
     }
@@ -65,6 +68,7 @@ class BFNV {
         return maxQLen;
     }
     void search(){
+        LocalLoopsAvoided = 0;
         node curr = node(init, goal);
         int heuristic = manhattanDistance;
         string nl = "\n";
@@ -87,24 +91,22 @@ class BFNV {
 
                 child.updateCost(heuristic);
                 //moving to stack This is mostly constant time.
-                // cout<<"Can move down, IS VISITED in CHILD NODE -> COUNT: "<<child->visited.count(child->toString())<<nl;
                 if(child.visited.count(child.toString()) == 0) { 
                     child.visited.insert(child.toString());
                     stateQueue.push(child);
                     
-                }
+                } else ++LocalLoopsAvoided;
 
             } 
             if(curr.canMoveRight()) {
                 node child =  node(curr.moveRight()).setVisited(curr.visited);
                 child.updateCost(heuristic);
                 //moving to stack This is mostly constant time.
-                // cout<<"Can move down, IS VISITED in CHILD NODE -> COUNT: "<<child->visited.count(child->toString())<<nl;
                 if(child.visited.count(child.toString()) == 0) { 
                     child.visited.insert(child.toString());
                     stateQueue.push(child);
                     
-                }
+                }else ++LocalLoopsAvoided;
 
             } 
             if(curr.canMoveUp()) {
@@ -112,26 +114,23 @@ class BFNV {
                 node child =  node(curr.moveUp()).setVisited(curr.visited);
                 child.updateCost(heuristic);
                 //moving to stack This is mostly constant time.
-                // cout<<"Can move down, IS VISITED in CHILD NODE -> COUNT: "<<child->visited.count(child->toString())<<nl;
-                if(child.visited.count(child.toString()) == 0) { 
+               if(child.visited.count(child.toString()) == 0) { 
                     child.visited.insert(child.toString());
                     stateQueue.push(child);
                     
-                }
+                }else ++LocalLoopsAvoided;
 
             }
             if(curr.canMoveLeft()) {
                 node child =  node(curr.moveLeft()).setVisited(curr.visited);
                 child.updateCost(heuristic);
                 //moving to stack This is mostly constant time.
-                // cout<<"Can move down, IS VISITED in CHILD NODE -> COUNT: "<<child->visited.count(child->toString())<<nl;
-                if(child.visited.count(child.toString()) == 0) { 
+               if(child.visited.count(child.toString()) == 0) { 
                     child.visited.insert(child.toString());
                     stateQueue.push(child);
                     
-                }
+                }else ++LocalLoopsAvoided;
             }
-            // cout<<"Q Len: "<<stateQueue.size()<<"\n";
             //5. Add extended paths to the Q; Add all children to visited
             maxQLen = std::max(maxQLen, stateQueue.size());
             //6.Go to step 2
