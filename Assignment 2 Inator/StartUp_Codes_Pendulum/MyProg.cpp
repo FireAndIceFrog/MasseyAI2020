@@ -55,7 +55,9 @@ int fieldX1, fieldY1, fieldX2, fieldY2; //playing field boundaries
 BoundaryType worldBoundary,deviceBoundary;
 char keyPressed[5];
 fuzzy_system_rec g_fuzzy_system;
-
+//constant variables as defined by Yamakawa's formula.
+	float a, b, c, d;
+	
 
 
 struct WorldStateType{
@@ -246,8 +248,12 @@ void displayInfo(const WorldStateType& s, const string msg="", const string time
 
 void runInvertedPendulum(){
 	
-	float inputs[4];
-	
+	float inputs[2];
+	a = 1; //weight of angle
+	b = 1; //weight of angular velocity
+	c = 1; //weight of distance
+	d = 1; //weight of velocity
+
 	WorldStateType prevState, newState;
 	// srand(time(NULL));  // Seed the random number generator
 			
@@ -277,7 +283,7 @@ void runInvertedPendulum(){
     //***************************************************************
     //Set the initial angle of the pole with respect to the vertical
     prevState.x = 1.0;
-	prevState.angle = 25.0 * (3.14/180);  //initial angle  = 35 degrees
+	prevState.angle = 0.0 * (3.14/180);  //initial angle  = 35 degrees
 	
 	
     initFuzzySystem(&g_fuzzy_system);	
@@ -298,14 +304,13 @@ void runInvertedPendulum(){
 		 drawInvertedPendulumWorld();
 	
 	     //retrieve inputs
-		 inputs[in_theta] = prevState.angle;
-		 inputs[in_theta_dot] = prevState.angle_dot;
-		 inputs[in_x] = prevState.x;
-		 inputs[in_x_dot] = prevState.x_dot;
+		 
+		 inputs[theta_emergency] = a*prevState.angle + b*prevState.angle_dot;
+		 inputs[x_emergency] = c*prevState.x + d*prevState.x_dot;
 		
          //1) Enable this only after your fuzzy system has been completed already.
          //Remember, you need to define the rules, membership function parameters and rule outputs.
-         //prevState.F = fuzzy_system(inputs, g_fuzzy_system); //call the fuzzy controller
+         prevState.F = fuzzy_system(inputs, g_fuzzy_system); //call the fuzzy controller
 		 
 		 externalForce=0.0;
 		 externalForce = getKey(); //manual operation
@@ -481,10 +486,8 @@ void generateControlSurface_Angle_vs_Angle_Dot(){
 	         prevState.angle = angle;
 
 
-			 inputs[in_theta] = prevState.angle;
-			 inputs[in_theta_dot] = prevState.angle_dot;
-			 inputs[in_x] = prevState.x;
-			 inputs[in_x_dot] = prevState.x_dot;
+			inputs[theta_emergency] = a*prevState.angle + b*prevState.angle_dot;
+			inputs[x_emergency] = c*prevState.x + d*prevState.x_dot;
 			
 	         prevState.F = 0.0;  //nothing is done.//fuzzy_system(inputs, g_fuzzy_system);
 			
@@ -513,10 +516,8 @@ void generateControlSurface_Angle_vs_Angle_Dot(){
 			 prevState.x_double_dot = newState.x_double_dot;
 			 
 			 //--------------------------
-			 inputs[in_theta] = prevState.angle;
-			 inputs[in_theta_dot] = prevState.angle_dot;
-			 inputs[in_x] = prevState.x;
-			 inputs[in_x_dot] = prevState.x_dot;
+			inputs[theta_emergency] = a*prevState.angle + b*prevState.angle_dot;
+		 	inputs[x_emergency] = c*prevState.x + d*prevState.x_dot;
 			
 	         prevState.F = fuzzy_system(inputs, g_fuzzy_system);
 			 dataSet.z[row][col] = prevState.F; //record Force calculated

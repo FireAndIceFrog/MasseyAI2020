@@ -1,5 +1,5 @@
-MyProg.exe		: 	MyProg.o transform.o sprites.o fuzzylogic.o algorithm.o graphics.o 
-	g++ -O2 -std=c++11  -Wl,-s -o MyProg.exe MyProg.o transform.o sprites.o fuzzylogic.o algorithm.o graphics.o -l gdi32 -static-libgcc -static-libstdc++
+main.exe		: 	MyProg.o transform.o sprites.o fuzzylogic.o algorithm.o graphics.o 
+	g++ -O2 -std=c++11  -Wl,-s -o main.exe MyProg.o transform.o sprites.o fuzzylogic.o algorithm.o graphics.o -l gdi32 -static-libgcc -static-libstdc++
 			
 MyProg.o		:	MyProg.cpp graphics.h nodes.h transform.h sprites.h fuzzylogic.h algorithm.h
 	g++ -O2  -std=c++11  -c -fpermissive -fconserve-space  -Wno-write-strings MyProg.cpp

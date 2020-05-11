@@ -8,64 +8,129 @@
 void initFuzzyRules(fuzzy_system_rec *fl) {
 	
    const int
-      no_of_x_rules = 25,
-      no_of_theta_rules = 25;
+      no_of_rules = fl->no_of_inp_regions;
    
    int i;
 	
 //---------------------------------------------------------------------------- 	
 //THETA vs. THETA_DOT	
 //   
-   for (i = 0;i < no_of_theta_rules;i++) {
-       fl->rules[i].inp_index[0] = in_theta;
-       fl->rules[i].inp_index[1] = in_theta_dot;
+   for (i = 0;i < no_of_rules;i++) {
+      //both inputs are added together in the equation Y = A*theta + B * theta_dot
+       fl->rules[i].inp_index[0] = theta_emergency;
+       fl->rules[i].inp_index[1] = x_emergency;
+       fl->rules[0].out_fuzzy_set = out_ze;
    }
       
-   /* Regions for theta and theta_dot: */
-   //sample only
-   //  fl->rules[0].inp_fuzzy_set[0] = in_nl;
-   // fl->rules[0].inp_fuzzy_set[1] = in_nl;
-   
-	
-	
-//----------------------------------------------------------------------------   
-//X vs. X_DOT
-//
-   for (i = 0;i < no_of_x_rules;i++) {
-   	  fl->rules[i + no_of_theta_rules].inp_index[0] = in_x;
-   	  fl->rules[i + no_of_theta_rules].inp_index[1] = in_x_dot;
-	}
-	  
-	/* Regions for x and x_dot: */
-   //sample only
-   // fl->rules[25+0].inp_fuzzy_set[0] = in_nl;
-   // fl->rules[25+0].inp_fuzzy_set[1] = in_nl;
-   
-   //and so on, and so forth...
+   /* Regions for theta emergence and x emergence: */
+   //if both are negatively large, output NL
+   fl->rules[0].inp_fuzzy_set[0] = in_nl;
+   fl->rules[0].inp_fuzzy_set[1] = in_nl;
+   fl->rules[0].out_fuzzy_set = out_nl;
 
-   // fl->rules[25+24].out_fuzzy_set = out_nl;
+   //if both are negatively small, output negatively medium
+   fl->rules[1].inp_fuzzy_set[0] = in_ns;
+   fl->rules[1].inp_fuzzy_set[1] = in_ns;
+   fl->rules[1].out_fuzzy_set = out_nm;
+
+   //if both are zero, output zero
+   fl->rules[2].inp_fuzzy_set[0] = in_ze;
+   fl->rules[2].inp_fuzzy_set[1] = in_ze;
+   fl->rules[2].out_fuzzy_set = out_ze;
+
+   //if both are positively small, output positively medium
+   fl->rules[3].inp_fuzzy_set[0] = in_ps;
+   fl->rules[3].inp_fuzzy_set[1] = in_ps;
+   fl->rules[3].out_fuzzy_set = out_pm;
+
+   //if both are positively large, output PL
+   fl->rules[4].inp_fuzzy_set[0] = in_pl;
+   fl->rules[4].inp_fuzzy_set[1] = in_pl;
+   fl->rules[4].out_fuzzy_set = out_pl;
+
+   //if theta emergence is PL and x emergence is zr, output PM
+   fl->rules[5].inp_fuzzy_set[0] = in_pl;
+   fl->rules[5].inp_fuzzy_set[1] = in_ze;
+   fl->rules[5].out_fuzzy_set = out_pm;
+
+   //if theta emergence is PL and x emergence is NL output PS
+   fl->rules[6].inp_fuzzy_set[0] = in_pl;
+   fl->rules[6].inp_fuzzy_set[1] = in_nl;
+   fl->rules[6].out_fuzzy_set = out_ps;
+
+   //if theta emergence is PS and x emergence is NS, output ps
+   fl->rules[7].inp_fuzzy_set[0] = in_ps;
+   fl->rules[7].inp_fuzzy_set[1] = in_ns;
+   fl->rules[7].out_fuzzy_set = out_ps;
+
+   //if theta emergence is zero and x emergence is PL, output ps
+   fl->rules[8].inp_fuzzy_set[0] = in_ze;
+   fl->rules[8].inp_fuzzy_set[1] = in_pl;
+   fl->rules[8].out_fuzzy_set = out_ps;
+
+   //if theta emergence is zr and x emergence is NL output NS
+   fl->rules[9].inp_fuzzy_set[0] = in_ze;
+   fl->rules[9].inp_fuzzy_set[1] = in_nl;
+   fl->rules[9].out_fuzzy_set = out_ns;
+
+   //if theta emergence is NS and x emergence is PS output NS
+   fl->rules[10].inp_fuzzy_set[0] = in_ns;
+   fl->rules[10].inp_fuzzy_set[1] = in_ps;
+   fl->rules[10].out_fuzzy_set = out_ns;
+
+   //if theta emergence is NL and x emergence is PL, output NS
+   fl->rules[11].inp_fuzzy_set[0] = in_nl;
+   fl->rules[11].inp_fuzzy_set[1] = in_pl;
+   fl->rules[11].out_fuzzy_set = out_ns;
+
+   //if theta emergence is NL and X emergence is ZE, output NM
+   fl->rules[12].inp_fuzzy_set[0] = in_nl;
+   fl->rules[12].inp_fuzzy_set[1] = in_ze;
+   fl->rules[12].out_fuzzy_set = out_nm;
+
+   //outputRules end
+   
+	
+   
+
+
+
+
+
       return;
 }
 
 
 void initMembershipFunctions(fuzzy_system_rec *fl) {
-	
-   /* The X membership functions */
-
-   //Sample routines only, to give you an idea of what to do here
-  	//~ fl->inp_mem_fns[in_x][in_neg] = init_trapz (-1.5,-0.5,0,0,left_trapezoid);
+	//copy from here 
+   // fl->inp_mem_fns[x_emergency][in_ze] = init_trapz (-1.5,-0.5,0,0,left_trapezoid);
    //~ fl->inp_mem_fns[in_x][in_ze] = init_trapz (-1.5,-0.5,0.5,1.5,regular_trapezoid);
    //~ fl->inp_mem_fns[in_x][in_pos] = init_trapz (0.5,1.5,0,0,right_trapezoid);
 	
-   /* The X dot membership functions */
+   /* The X membership functions */
+   float a,b,c,d; // numbers to play with membership proportions easily.
+   a = 2.0;
+   b = 2.0;
+   c = 2.0;
+   d = 2.0;
+   fl->inp_mem_fns[x_emergency][in_nl] = init_trapz (c*-0.5,d*-0.25,0,0,left_trapezoid);
+   fl->inp_mem_fns[x_emergency][in_ns] = init_trapz (a*-0.5,b*-0.25,c*-0.25,d*0,regular_trapezoid);
+  	fl->inp_mem_fns[x_emergency][in_ze] = init_trapz (a*-0.25,b*0,c*0,d*0.25,regular_trapezoid);
+   fl->inp_mem_fns[x_emergency][in_ps] = init_trapz (a*0,b*0.25,c*0.25,d*0.5,regular_trapezoid);
+   fl->inp_mem_fns[x_emergency][in_pl] = init_trapz (a*0.25,b*0.5,c*0,d*0,right_trapezoid);
+   
+	
+   /* The theta emergence membership */
    //enter the appropriate membership function initialisations here 
-
-   /* The theta membership functions */
-   //enter the appropriate membership function initialisations here
-  	
-   /* The theta dot membership functions */
-   //enter the appropriate membership function initialisations here
-  	
+  	a = 1.0;
+   b = 1.0;
+   c = 1.0;
+   d = 1.0;
+   fl->inp_mem_fns[theta_emergency][in_nl] = init_trapz (c*-0.5,d*-0.25,0,0,left_trapezoid);
+   fl->inp_mem_fns[theta_emergency][in_ns] = init_trapz (a*-0.5,b*-0.25,c*-0.25,d*0,regular_trapezoid);
+  	fl->inp_mem_fns[theta_emergency][in_ze] = init_trapz (a*-0.25,b*0,c*0,d*0.25,regular_trapezoid);
+   fl->inp_mem_fns[theta_emergency][in_ps] = init_trapz (a*0,b*0.25,c*0.25,d*0.5,regular_trapezoid);
+   fl->inp_mem_fns[theta_emergency][in_pl] = init_trapz (a*0.25,b*0.5,c*0,d*0,right_trapezoid);
 
 	
 	
@@ -75,15 +140,22 @@ void initMembershipFunctions(fuzzy_system_rec *fl) {
 void initFuzzySystem (fuzzy_system_rec *fl) {
 
    //Note: The settings of these parameters will depend upon your fuzzy system design
-   fl->no_of_inputs = 2;  /* Inputs are handled 2 at a time only */
-   fl->no_of_rules = 50;
-   fl->no_of_inp_regions = 5;
-   fl->no_of_outputs = 9;
+   fl->no_of_inputs = 2;  /* Inputs are handled 1 at a time only */
+   fl->no_of_rules = 25;
+   fl->no_of_inp_regions = 5; //number of input regions per input
+   fl->no_of_outputs = 1;
 	
 	
 	//Sample only
 	// fl->output_values [out_nvl]=-95.0;
 	// fl->output_values [out_nl] = -85.0;
+   fl->output_values [out_nl]=-125.0;
+   fl->output_values [out_nm]=-75.0;
+   fl->output_values [out_ns]=-30.0;
+   fl->output_values [out_ze]=-0.0;
+   fl->output_values [out_ps]=30.0;
+   fl->output_values [out_pm]=75.0;
+   fl->output_values [out_pl]=125.0;
    
 
    fl->rules = (rule *) malloc ((size_t)(fl->no_of_rules*sizeof(rule)));
@@ -163,13 +235,12 @@ float trapz (float x, trapezoid trz) {
 }  /* End function */
 
 //////////////////////////////////////////////////////////////////////////////
-float min_of(float values[],int no_of_inps) {
+float max_of(float values[],int no_of_inps) {
    int i;
    float val;
    val = values [0];
    for (i = 1;i < no_of_inps;i++) {
-       if (values[i] < val)
-	  val = values [i];
+       if (values[i] > val) val = values [i];
    }
    return val;
 }
@@ -186,13 +257,13 @@ float fuzzy_system (float inputs[],fuzzy_system_rec fz) {
    
    for (i = 0;i < fz.no_of_rules;i++) {
       for (j = 0;j < fz.no_of_inputs;j++) {
-	   variable_index = fz.rules[i].inp_index[j];
-	   fuzzy_set = fz.rules[i].inp_fuzzy_set[j];
-	   m_values[j] = trapz(inputs[variable_index],
+         variable_index = fz.rules[i].inp_index[j];
+         fuzzy_set = fz.rules[i].inp_fuzzy_set[j];
+         m_values[j] = trapz(inputs[variable_index],
 	       fz.inp_mem_fns[variable_index][fuzzy_set]);
 	   } /* end j  */
       
-       weight = min_of (m_values,fz.no_of_inputs);
+       weight = max_of (m_values,fz.no_of_inputs);
 				
        sum1 += weight * fz.output_values[fz.rules[i].out_fuzzy_set];
        sum2 += weight;

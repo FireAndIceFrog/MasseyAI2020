@@ -27,13 +27,13 @@ using namespace std;
 typedef enum {regular_trapezoid, left_trapezoid, right_trapezoid} trapz_type;
 
 //Input parameters
-enum {in_theta,in_theta_dot,in_x,in_x_dot};
+enum {theta_emergency,x_emergency};
 
 //Fuzzy sets
 enum {in_nl,in_ns,in_ze,in_ps, in_pl};
 
 //Fuzzy output terms
-enum {out_nvl,out_nl,out_nm, out_ns, out_ze,out_ps, out_pm,out_pl, out_pvl};
+enum {out_nvl,out_nl,out_nm, out_ns, out_ze,out_ps, out_pm,out_pl, out_pvl,out_NA};
 
 
 typedef struct {
