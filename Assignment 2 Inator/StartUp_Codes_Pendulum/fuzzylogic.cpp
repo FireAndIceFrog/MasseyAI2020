@@ -144,7 +144,7 @@ void initFuzzySystem (fuzzy_system_rec *fl) {
    fl->no_of_rules = 13;
    fl->no_of_inp_regions = 5; //number of input regions per input
    fl->no_of_outputs = 1;
-	float weight = 1.0;
+	float weight = 2.0;
 	
 	//Sample only
 	// fl->output_values [out_nvl]=-95.0;
