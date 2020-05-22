@@ -249,7 +249,7 @@ void displayInfo(const WorldStateType& s, const string msg="", const string time
 void runInvertedPendulum(){
 	
 	float inputs[2];
-	a = 16; //weight of angle
+	a = 17; //weight of angle
 	b = 1; //weight of angular velocity
 	c = 1.88; //weight of distance
 	d = 1; //weight of velocity
@@ -282,8 +282,8 @@ void runInvertedPendulum(){
 	//---------------------------------------------------------------
     //***************************************************************
     //Set the initial angle of the pole with respect to the vertical
-    prevState.x = 1.0;
-	prevState.angle = -40 * (3.14/180);  //initial angle  = 35 degrees
+    prevState.x = 0.0;
+	prevState.angle = 40 * (3.14/180);  //initial angle  = 35 degrees
 	
 	
     initFuzzySystem(&g_fuzzy_system);	
@@ -305,7 +305,7 @@ void runInvertedPendulum(){
 	
 	     //retrieve inputs
 		 
-		 inputs[theta_emergency] = a*prevState.angle + b*prevState.angle_dot;
+		 inputs[theta_emergency] = a*prevState.angle + b*prevState.angle_dot; 
 		 inputs[x_emergency] = c*prevState.x + d*prevState.x_dot;
 		
          //1) Enable this only after your fuzzy system has been completed already.
