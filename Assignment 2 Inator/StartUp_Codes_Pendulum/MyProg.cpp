@@ -49,7 +49,7 @@ using namespace std;
 /// Global Variables ///////////////////////////////////////////////////////////////////////
 
 
-bool DEBUG_MODE=false;
+bool DEBUG_MODE=true;
 float WORLD_MAXX, WORLD_MAXY;
 int fieldX1, fieldY1, fieldX2, fieldY2; //playing field boundaries
 BoundaryType worldBoundary,deviceBoundary;
@@ -249,10 +249,10 @@ void displayInfo(const WorldStateType& s, const string msg="", const string time
 void runInvertedPendulum(){
 	
 	float inputs[2];
-	a = 17; //weight of angle
+	a = 16; //weight of angle
 	b = 1; //weight of angular velocity
-	c = 1.88; //weight of distance
-	d = 1; //weight of velocity
+	c = 2; //weight of distance
+	d = 1.2; //weight of velocity
 
 	WorldStateType prevState, newState;
 	// srand(time(NULL));  // Seed the random number generator
@@ -282,8 +282,8 @@ void runInvertedPendulum(){
 	//---------------------------------------------------------------
     //***************************************************************
     //Set the initial angle of the pole with respect to the vertical
-    prevState.x = 0.0;
-	prevState.angle = 40 * (3.14/180);  //initial angle  = 35 degrees
+    prevState.x = -2;
+	prevState.angle = 60 * (3.14/180);  //initial angle  = 35 degrees
 	
 	
     initFuzzySystem(&g_fuzzy_system);	
