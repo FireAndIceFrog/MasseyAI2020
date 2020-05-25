@@ -49,7 +49,7 @@ using namespace std;
 /// Global Variables ///////////////////////////////////////////////////////////////////////
 
 
-bool DEBUG_MODE=true;
+bool DEBUG_MODE=false;
 float WORLD_MAXX, WORLD_MAXY;
 int fieldX1, fieldY1, fieldX2, fieldY2; //playing field boundaries
 BoundaryType worldBoundary,deviceBoundary;
@@ -249,7 +249,7 @@ void displayInfo(const WorldStateType& s, const string msg="", const string time
 void runInvertedPendulum(){
 	
 	float inputs[2];
-	a = 16; //weight of angle
+	a = 8; //weight of angle
 	b = 1; //weight of angular velocity
 	c = 2; //weight of distance
 	d = 1.2; //weight of velocity
@@ -409,7 +409,7 @@ void runInvertedPendulum(){
 
 
 void generateControlSurface_Angle_vs_Angle_Dot(){	
-	float inputs[4];
+	float inputs[2];
 	
 	cout << "Generating control surface (Angle vs. Angle_Dot)..." << endl;
 	WorldStateType prevState, newState;
@@ -600,10 +600,10 @@ int main(void) {
 		runInvertedPendulum();
 	
 		//3) Enable this only after your fuzzy system has been completed already.
-		// generateControlSurface_Angle_vs_Angle_Dot();
+		generateControlSurface_Angle_vs_Angle_Dot();
 		
 		//4) Enable this only after your fuzzy system has been completed already.
-		// saveDataToFile("data_angle_vs_angle_dot.txt");
+		saveDataToFile("data_angle_vs_angle_dot.txt");
 		
    }
    catch(...){
