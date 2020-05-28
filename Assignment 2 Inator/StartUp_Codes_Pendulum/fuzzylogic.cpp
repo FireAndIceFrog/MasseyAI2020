@@ -56,7 +56,7 @@ void initFuzzyRules(fuzzy_system_rec *fl) {
    //if theta emergence is PL and x emergence is NL output PS
    fl->rules[6].inp_fuzzy_set[0] = in_pl;
    fl->rules[6].inp_fuzzy_set[1] = in_nl;
-   fl->rules[6].out_fuzzy_set = out_ps;
+   fl->rules[6].out_fuzzy_set = out_pm;
 
    //if theta emergence is PS and x emergence is NS, output ps
    fl->rules[7].inp_fuzzy_set[0] = in_ps;
@@ -81,7 +81,7 @@ void initFuzzyRules(fuzzy_system_rec *fl) {
    //if theta emergence is NL and x emergence is PL, output NS
    fl->rules[11].inp_fuzzy_set[0] = in_nl;
    fl->rules[11].inp_fuzzy_set[1] = in_pl;
-   fl->rules[11].out_fuzzy_set = out_ns;
+   fl->rules[11].out_fuzzy_set = out_nm;
 
    //if theta emergence is NL and X emergence is ZE, output NM
    fl->rules[12].inp_fuzzy_set[0] = in_nl;
@@ -139,13 +139,13 @@ void initFuzzySystem (fuzzy_system_rec *fl) {
 	//Sample only
 	// fl->output_values [out_nvl]=-95.0;
 	// fl->output_values [out_nl] = -85.0;
-   fl->output_values [out_nl]=-125.0;
-   fl->output_values [out_nm]=-90.0;
+   fl->output_values [out_nl]=-170.0;
+   fl->output_values [out_nm]=-120.0;
    fl->output_values [out_ns]=-70.0;
    fl->output_values [out_ze]=-0.0;
    fl->output_values [out_ps]=70.0;
-   fl->output_values [out_pm]=90.0;
-   fl->output_values [out_pl]=125.0;
+   fl->output_values [out_pm]=120.0;
+   fl->output_values [out_pl]=170.0;
    
 
    fl->rules = (rule *) malloc ((size_t)(fl->no_of_rules*sizeof(rule)));
@@ -234,7 +234,6 @@ float min_of(float values[],int no_of_inps) {
    }
    return val;
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////////
