@@ -49,7 +49,7 @@ using namespace std;
 /// Global Variables ///////////////////////////////////////////////////////////////////////
 
 
-bool DEBUG_MODE=false;
+bool DEBUG_MODE=true;
 float WORLD_MAXX, WORLD_MAXY;
 int fieldX1, fieldY1, fieldX2, fieldY2; //playing field boundaries
 BoundaryType worldBoundary,deviceBoundary;
@@ -249,8 +249,8 @@ void displayInfo(const WorldStateType& s, const string msg="", const string time
 void runInvertedPendulum(){
 	
 	float inputs[2];
-	a = 8; //weight of angle
-	b = 1; //weight of angular velocity
+	a = 6; //weight of angle
+	b = 0.4; //weight of angular velocity
 	c = 2; //weight of distance
 	d = 1.2; //weight of velocity
 
