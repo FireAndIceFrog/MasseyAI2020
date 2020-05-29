@@ -31,7 +31,7 @@ void initFuzzyRules(fuzzy_system_rec *fl) {
    //if both are negatively small, output negatively medium
    fl->rules[1].inp_fuzzy_set[0] = in_ns;
    fl->rules[1].inp_fuzzy_set[1] = in_ns;
-   fl->rules[1].out_fuzzy_set = out_nm;
+   fl->rules[1].out_fuzzy_set = out_ns;
 
    //if both are zero, output zero
    fl->rules[2].inp_fuzzy_set[0] = in_ze;
@@ -41,7 +41,7 @@ void initFuzzyRules(fuzzy_system_rec *fl) {
    //if both are positively small, output positively medium
    fl->rules[3].inp_fuzzy_set[0] = in_ps;
    fl->rules[3].inp_fuzzy_set[1] = in_ps;
-   fl->rules[3].out_fuzzy_set = out_pm;
+   fl->rules[3].out_fuzzy_set = out_ps;
 
    //if both are positively large, output PL
    fl->rules[4].inp_fuzzy_set[0] = in_pl;
@@ -89,6 +89,11 @@ void initFuzzyRules(fuzzy_system_rec *fl) {
    fl->rules[12].out_fuzzy_set = out_nm;
 
 
+   
+   
+
+
+
 
       return;
 }
@@ -117,11 +122,11 @@ void initMembershipFunctions(fuzzy_system_rec *fl) {
    /* The theta emergence membership */
    //enter the appropriate membership function initialisations here 
 
-   fl->inp_mem_fns[theta_emergency][in_nl] = init_trapz (-2,-4,0,0,left_trapezoid);
-   fl->inp_mem_fns[theta_emergency][in_ns] = init_trapz (-4,-1,-1,0,regular_trapezoid);
-  	fl->inp_mem_fns[theta_emergency][in_ze] = init_trapz (-1,0,0,1,regular_trapezoid);
-   fl->inp_mem_fns[theta_emergency][in_ps] = init_trapz (0,1,1,4,regular_trapezoid);
-   fl->inp_mem_fns[theta_emergency][in_pl] = init_trapz (2,4,0,0,right_trapezoid);
+   fl->inp_mem_fns[theta_emergency][in_nl] = init_trapz (-1,-2,0,0,left_trapezoid);
+   fl->inp_mem_fns[theta_emergency][in_ns] = init_trapz (-2,-1,-0.2,0,regular_trapezoid);
+  	fl->inp_mem_fns[theta_emergency][in_ze] = init_trapz (-0.2,0,0,0.2,regular_trapezoid);
+   fl->inp_mem_fns[theta_emergency][in_ps] = init_trapz (0,0.2,1,2,regular_trapezoid);
+   fl->inp_mem_fns[theta_emergency][in_pl] = init_trapz (1,2,0,0,right_trapezoid);
 
 	
 	
@@ -135,17 +140,17 @@ void initFuzzySystem (fuzzy_system_rec *fl) {
    fl->no_of_rules = 13;
    fl->no_of_inp_regions = 5; //number of input regions per input
    fl->no_of_outputs = 1;
-	float weight = 1.0;
+	float weight = 1;
 	//Sample only
 	// fl->output_values [out_nvl]=-95.0;
 	// fl->output_values [out_nl] = -85.0;
-   fl->output_values [out_nl]=-170.0;
-   fl->output_values [out_nm]=-120.0;
-   fl->output_values [out_ns]=-70.0;
-   fl->output_values [out_ze]=-0.0;
-   fl->output_values [out_ps]=70.0;
-   fl->output_values [out_pm]=120.0;
-   fl->output_values [out_pl]=170.0;
+   fl->output_values [out_nl]=-150.0*weight;
+   fl->output_values [out_nm]=-60.0*weight;
+   fl->output_values [out_ns]=-4.0*weight;
+   fl->output_values [out_ze]=-0.0*weight;
+   fl->output_values [out_ps]=4.0*weight;
+   fl->output_values [out_pm]=60.0*weight;
+   fl->output_values [out_pl]=150.0*weight;
    
 
    fl->rules = (rule *) malloc ((size_t)(fl->no_of_rules*sizeof(rule)));
