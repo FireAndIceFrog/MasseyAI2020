@@ -31,7 +31,7 @@ void initFuzzyRules(fuzzy_system_rec *fl) {
    //if both are negatively small, output negatively medium
    fl->rules[1].inp_fuzzy_set[0] = in_ns;
    fl->rules[1].inp_fuzzy_set[1] = in_ns;
-   fl->rules[1].out_fuzzy_set = out_ns;
+   fl->rules[1].out_fuzzy_set = out_nm;
 
    //if both are zero, output zero
    fl->rules[2].inp_fuzzy_set[0] = in_ze;
@@ -41,7 +41,7 @@ void initFuzzyRules(fuzzy_system_rec *fl) {
    //if both are positively small, output positively medium
    fl->rules[3].inp_fuzzy_set[0] = in_ps;
    fl->rules[3].inp_fuzzy_set[1] = in_ps;
-   fl->rules[3].out_fuzzy_set = out_ps;
+   fl->rules[3].out_fuzzy_set = out_pm;
 
    //if both are positively large, output PL
    fl->rules[4].inp_fuzzy_set[0] = in_pl;
@@ -56,12 +56,12 @@ void initFuzzyRules(fuzzy_system_rec *fl) {
    //if theta emergence is PL and x emergence is NL output PS
    fl->rules[6].inp_fuzzy_set[0] = in_pl;
    fl->rules[6].inp_fuzzy_set[1] = in_nl;
-   fl->rules[6].out_fuzzy_set = out_pm;
+   fl->rules[6].out_fuzzy_set = out_pl;
 
    //if theta emergence is PS and x emergence is NS, output ps
    fl->rules[7].inp_fuzzy_set[0] = in_ps;
    fl->rules[7].inp_fuzzy_set[1] = in_ns;
-   fl->rules[7].out_fuzzy_set = out_ps;
+   fl->rules[7].out_fuzzy_set = out_pm;
 
    //if theta emergence is zero and x emergence is PL, output ps
    fl->rules[8].inp_fuzzy_set[0] = in_ze;
@@ -76,22 +76,17 @@ void initFuzzyRules(fuzzy_system_rec *fl) {
    //if theta emergence is NS and x emergence is PS output NS
    fl->rules[10].inp_fuzzy_set[0] = in_ns;
    fl->rules[10].inp_fuzzy_set[1] = in_ps;
-   fl->rules[10].out_fuzzy_set = out_ns;
+   fl->rules[10].out_fuzzy_set = out_nm;
 
    //if theta emergence is NL and x emergence is PL, output NS
    fl->rules[11].inp_fuzzy_set[0] = in_nl;
    fl->rules[11].inp_fuzzy_set[1] = in_pl;
-   fl->rules[11].out_fuzzy_set = out_nm;
+   fl->rules[11].out_fuzzy_set = out_nl;
 
    //if theta emergence is NL and X emergence is ZE, output NM
    fl->rules[12].inp_fuzzy_set[0] = in_nl;
    fl->rules[12].inp_fuzzy_set[1] = in_ze;
    fl->rules[12].out_fuzzy_set = out_nm;
-
-
-   
-   
-
 
 
 
@@ -123,9 +118,9 @@ void initMembershipFunctions(fuzzy_system_rec *fl) {
    //enter the appropriate membership function initialisations here 
 
    fl->inp_mem_fns[theta_emergency][in_nl] = init_trapz (-1,-2,0,0,left_trapezoid);
-   fl->inp_mem_fns[theta_emergency][in_ns] = init_trapz (-2,-1,-0.2,0,regular_trapezoid);
-  	fl->inp_mem_fns[theta_emergency][in_ze] = init_trapz (-0.2,0,0,0.2,regular_trapezoid);
-   fl->inp_mem_fns[theta_emergency][in_ps] = init_trapz (0,0.2,1,2,regular_trapezoid);
+   fl->inp_mem_fns[theta_emergency][in_ns] = init_trapz (-2,-1,-0.1,0,regular_trapezoid);
+  	fl->inp_mem_fns[theta_emergency][in_ze] = init_trapz (-0.1,0,0,0.1,regular_trapezoid);
+   fl->inp_mem_fns[theta_emergency][in_ps] = init_trapz (0,0.1,1,2,regular_trapezoid);
    fl->inp_mem_fns[theta_emergency][in_pl] = init_trapz (1,2,0,0,right_trapezoid);
 
 	

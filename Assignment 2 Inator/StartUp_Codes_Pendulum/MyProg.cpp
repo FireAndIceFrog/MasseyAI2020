@@ -282,8 +282,8 @@ void runInvertedPendulum(){
 	//---------------------------------------------------------------
     //***************************************************************
     //Set the initial angle of the pole with respect to the vertical
-    prevState.x = -2;
-	prevState.angle = 60 * (3.14/180);  //initial angle  = 35 degrees
+    prevState.x = 1;
+	prevState.angle = -60 * (3.14/180);  //initial angle  = 35 degrees
 	
 	
     initFuzzySystem(&g_fuzzy_system);	
