@@ -49,7 +49,7 @@ using namespace std;
 /// Global Variables ///////////////////////////////////////////////////////////////////////
 
 
-bool DEBUG_MODE=true;
+bool DEBUG_MODE=false;
 float WORLD_MAXX, WORLD_MAXY;
 int fieldX1, fieldY1, fieldX2, fieldY2; //playing field boundaries
 BoundaryType worldBoundary,deviceBoundary;
