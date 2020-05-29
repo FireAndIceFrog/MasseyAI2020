@@ -409,7 +409,7 @@ void runInvertedPendulum(){
 
 
 void generateControlSurface_Angle_vs_Angle_Dot(){	
-	float inputs[4];
+	float inputs[2];
 	
 	cout << "Generating control surface (Angle vs. Angle_Dot)..." << endl;
 	WorldStateType prevState, newState;
@@ -600,10 +600,10 @@ int main(void) {
 		runInvertedPendulum();
 	
 		//3) Enable this only after your fuzzy system has been completed already.
-		// generateControlSurface_Angle_vs_Angle_Dot();
+		generateControlSurface_Angle_vs_Angle_Dot();
 		
 		//4) Enable this only after your fuzzy system has been completed already.
-		// saveDataToFile("data_angle_vs_angle_dot.txt");
+		saveDataToFile("data_angle_vs_angle_dot.txt");
 		
    }
    catch(...){
